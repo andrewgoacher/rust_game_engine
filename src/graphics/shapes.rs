@@ -7,7 +7,7 @@ pub struct Vertex {
 
 implement_vertex!(Vertex, position, normal, tex_coords);
 
-pub fn bill_board() -> Vec<Vertex> {
+pub fn create_billboard() -> Vec<Vertex> {
     vec![
         Vertex {
             position: [-1.0, 1.0, 0.0],

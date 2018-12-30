@@ -8,7 +8,7 @@ mod io;
 use io::to_cursor;
 
 mod graphics;
-use graphics::shapes::bill_board;
+use graphics::shapes::create_billboard;
 
 fn main() {
     use glium::{glutin, Surface};
@@ -18,7 +18,7 @@ fn main() {
     let context = glutin::ContextBuilder::new().with_depth_buffer(24);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-    let billboard = bill_board();
+    let billboard = create_billboard();
     let shape = glium::vertex::VertexBuffer::new(&display, &billboard).unwrap();
 
 
