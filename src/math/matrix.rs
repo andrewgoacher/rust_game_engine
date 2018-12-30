@@ -19,7 +19,6 @@ impl Matrix {
           let (width, height) = dimensions;
             let aspect_ratio = height as f32 / width as f32;
 
-            let fov: f32 = 3.141592 / 3.0;
             let (near,far) = z;
 
             let f = 1.0 / (fov / 2.0).tan();
