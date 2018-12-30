@@ -2,18 +2,10 @@
 extern crate glium;
 extern crate image;
 
-use std::io::prelude::*;
 use std::fs::File;
-use std::io::Cursor;
 
-fn read_file(file_name : &str) -> Cursor<Vec<u8>> {
-    let error = format!("Failed to find {}", &file_name);
-    let mut file = File::open(&file_name).expect(&error);
-    let mut contents: Vec<u8> = vec![];
-
-    file.read_to_end(&mut contents).ok();
-    Cursor::new(contents)
-}
+mod io;
+use io::to_cursor;
 
 fn main() {
     use glium::{glutin, Surface};
@@ -40,15 +32,17 @@ fn main() {
         ]).unwrap();
 
 
-    let cursor = read_file("./content/tuto-14-diffuse.jpg");
-    let image = image::load(cursor,
+    let file = File::open("./content/tuto-14-diffuse.jpg")
+        .expect("Failed to find ./content/tuto-14-diffuse.jpg");
+    let image = image::load(to_cursor(file),
                             image::JPEG).unwrap().to_rgba();
     let image_dimensions = image.dimensions();
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
     let diffuse_texture = glium::texture::SrgbTexture2d::new(&display, image).unwrap();
 
-    let cursor = read_file("./content/tuto-14-normal.png");
-    let image = image::load(cursor,
+    let file = File::open("./content/tuto-14-normal.png")
+        .expect("Failed to fin ./content/tuto-14-normal.png");
+    let image = image::load(to_cursor(file),
                             image::PNG).unwrap().to_rgba();
     let image_dimensions = image.dimensions();
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
