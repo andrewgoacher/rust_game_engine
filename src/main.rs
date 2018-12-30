@@ -9,6 +9,9 @@ use graphics::shapes::create_billboard;
 use graphics::shader::create_shader;
 use graphics::textures::{load_texture,load_texture_srgb};
 
+pub mod math;
+use math::matrix::Matrix;
+
 fn main() {
     use glium::{glutin, Surface};
 
@@ -25,36 +28,16 @@ fn main() {
     let program = create_shader("./content/vertex_shader.glsl", "./content/fragment_shader.glsl", &display);
 
     let mut closed = false;
+
+    let model: Matrix = Matrix::identity();
+    let view: Matrix = Matrix::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]);
+    const FOV: f32 = 3.141592 / 3.0;
+
     while !closed {
         let mut target = display.draw();
         target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
-        let model = [
-            [1.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0f32]
-        ];
-
-        let view = view_matrix(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]);
-
-        let perspective = {
-            let (width, height) = target.get_dimensions();
-            let aspect_ratio = height as f32 / width as f32;
-
-            let fov: f32 = 3.141592 / 3.0;
-            let zfar = 1024.0;
-            let znear = 0.1;
-
-            let f = 1.0 / (fov / 2.0).tan();
-
-            [
-                [f *   aspect_ratio   ,    0.0,              0.0              ,   0.0],
-                [         0.0         ,     f ,              0.0              ,   0.0],
-                [         0.0         ,    0.0,  (zfar+znear)/(zfar-znear)    ,   1.0],
-                [         0.0         ,    0.0, -(2.0*zfar*znear)/(zfar-znear),   0.0],
-            ]
-        };
+        let perspective: Matrix = Matrix::perspective(target.get_dimensions(), FOV, (0.1f32,1024.0f32));
 
         let light = [1.4, 0.4, 0.7f32];
 
@@ -68,7 +51,9 @@ fn main() {
         };
 
         target.draw(&shape, glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip), &program,
-                    &uniform! { model: model, view: view, perspective: perspective,
+                    &uniform! { model: model.to_array(),
+                                view: view.to_array(),
+                                perspective: perspective.to_array(),
                                 u_light: light, diffuse_tex: &diffuse_texture, normal_tex: &normal_map },
                     &params).unwrap();
         target.finish().unwrap();
@@ -83,39 +68,4 @@ fn main() {
             }
         });
     }
-}
-
-
-fn view_matrix(position: &[f32; 3], direction: &[f32; 3], up: &[f32; 3]) -> [[f32; 4]; 4] {
-    let f = {
-        let f = direction;
-        let len = f[0] * f[0] + f[1] * f[1] + f[2] * f[2];
-        let len = len.sqrt();
-        [f[0] / len, f[1] / len, f[2] / len]
-    };
-
-    let s = [up[1] * f[2] - up[2] * f[1],
-             up[2] * f[0] - up[0] * f[2],
-             up[0] * f[1] - up[1] * f[0]];
-
-    let s_norm = {
-        let len = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
-        let len = len.sqrt();
-        [s[0] / len, s[1] / len, s[2] / len]
-    };
-
-    let u = [f[1] * s_norm[2] - f[2] * s_norm[1],
-             f[2] * s_norm[0] - f[0] * s_norm[2],
-             f[0] * s_norm[1] - f[1] * s_norm[0]];
-
-    let p = [-position[0] * s_norm[0] - position[1] * s_norm[1] - position[2] * s_norm[2],
-             -position[0] * u[0] - position[1] * u[1] - position[2] * u[2],
-             -position[0] * f[0] - position[1] * f[1] - position[2] * f[2]];
-
-    [
-        [s_norm[0], u[0], f[0], 0.0],
-        [s_norm[1], u[1], f[1], 0.0],
-        [s_norm[2], u[2], f[2], 0.0],
-        [p[0], p[1], p[2], 1.0],
-    ]
 }
