@@ -1,0 +1,8 @@
+[package]
+name = "rusty_wall"
+version = "0.1.0"
+authors = ["Andrew Goacher <andrewgoacher@outlook.com>"]
+
+[dependencies]
+glium = "*"
+image = "*"
