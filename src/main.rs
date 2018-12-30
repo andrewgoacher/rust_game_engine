@@ -2,13 +2,12 @@
 extern crate glium;
 extern crate image;
 
-mod io;
-use io::to_cursor;
+pub mod io;
 
 mod graphics;
 use graphics::shapes::create_billboard;
 use graphics::shader::create_shader;
-use std::fs::File;
+use graphics::textures::{load_texture,load_texture_srgb};
 
 fn main() {
     use glium::{glutin, Surface};
@@ -20,21 +19,8 @@ fn main() {
 
     let shape = create_billboard(&display);
 
-    let file = File::open("./content/tuto-14-diffuse.jpg")
-        .expect("Failed to find ./content/tuto-14-diffuse.jpg");
-    let image = image::load(to_cursor(file),
-                            image::JPEG).unwrap().to_rgba();
-    let image_dimensions = image.dimensions();
-    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
-    let diffuse_texture = glium::texture::SrgbTexture2d::new(&display, image).unwrap();
-
-    let file = File::open("./content/tuto-14-normal.png")
-        .expect("Failed to fin ./content/tuto-14-normal.png");
-    let image = image::load(to_cursor(file),
-                            image::PNG).unwrap().to_rgba();
-    let image_dimensions = image.dimensions();
-    let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
-    let normal_map = glium::texture::Texture2d::new(&display, image).unwrap();
+    let diffuse_texture = load_texture_srgb(&display, "./content/tuto-14-diffuse.jpg", image::JPEG);
+    let normal_map = load_texture(&display, "./content/tuto-14-normal.png", image::PNG);
 
     let program = create_shader("./content/vertex_shader.glsl", "./content/fragment_shader.glsl", &display);
 
