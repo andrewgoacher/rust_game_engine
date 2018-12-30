@@ -7,6 +7,9 @@ use std::fs::{File,read_to_string};
 mod io;
 use io::to_cursor;
 
+mod graphics;
+use graphics::shapes::bill_board;
+
 fn main() {
     use glium::{glutin, Surface};
 
@@ -15,21 +18,8 @@ fn main() {
     let context = glutin::ContextBuilder::new().with_depth_buffer(24);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-    #[derive(Copy, Clone)]
-    struct Vertex {
-        position: [f32; 3],
-        normal: [f32; 3],
-        tex_coords: [f32; 2],
-    }
-
-    implement_vertex!(Vertex, position, normal, tex_coords);
-
-    let shape = glium::vertex::VertexBuffer::new(&display, &[
-            Vertex { position: [-1.0,  1.0, 0.0], normal: [0.0, 0.0, -1.0], tex_coords: [0.0, 1.0] },
-            Vertex { position: [ 1.0,  1.0, 0.0], normal: [0.0, 0.0, -1.0], tex_coords: [1.0, 1.0] },
-            Vertex { position: [-1.0, -1.0, 0.0], normal: [0.0, 0.0, -1.0], tex_coords: [0.0, 0.0] },
-            Vertex { position: [ 1.0, -1.0, 0.0], normal: [0.0, 0.0, -1.0], tex_coords: [1.0, 0.0] },
-        ]).unwrap();
+    let billboard = bill_board();
+    let shape = glium::vertex::VertexBuffer::new(&display, &billboard).unwrap();
 
 
     let file = File::open("./content/tuto-14-diffuse.jpg")
@@ -49,8 +39,10 @@ fn main() {
     let normal_map = glium::texture::Texture2d::new(&display, image).unwrap();
 
 
-    let vertex_shader_src = read_to_string("./content/vertex_shader.glsl").expect("Failed to find vertex shader");
-    let fragment_shader_src = read_to_string("./content/fragment_shader.glsl").expect("Failed to find fragment shader");
+    let vertex_shader_src = read_to_string("./content/vertex_shader.glsl")
+        .expect("Failed to find vertex shader");
+    let fragment_shader_src = read_to_string("./content/fragment_shader.glsl")
+        .expect("Failed to find fragment shader");
 
     let program = glium::Program::from_source(&display,
                                                 &vertex_shader_src[..],
