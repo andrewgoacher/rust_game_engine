@@ -8,6 +8,7 @@ use io::to_cursor;
 mod graphics;
 use graphics::shapes::create_billboard;
 use graphics::shader::create_shader;
+use std::fs::File;
 
 fn main() {
     use glium::{glutin, Surface};
@@ -17,9 +18,7 @@ fn main() {
     let context = glutin::ContextBuilder::new().with_depth_buffer(24);
     let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-    let billboard = create_billboard();
-    let shape = glium::vertex::VertexBuffer::new(&display, &billboard).unwrap();
-
+    let shape = create_billboard(&display);
 
     let file = File::open("./content/tuto-14-diffuse.jpg")
         .expect("Failed to find ./content/tuto-14-diffuse.jpg");
