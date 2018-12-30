@@ -1,4 +1,3 @@
-use glium::backend::Facade;
 use glium::VertexBuffer;
 
 #[derive(Copy, Clone)]
@@ -8,11 +7,12 @@ pub struct Vertex {
     tex_coords: [f32; 2],
 }
 
+use game::Game;
+
 implement_vertex!(Vertex, position, normal, tex_coords);
 
-pub fn create_billboard<F>(facade: &F) -> VertexBuffer<Vertex> 
-    where F: Facade{
-    VertexBuffer::new(facade,
+pub fn create_billboard(game: &Game) -> VertexBuffer<Vertex>  {
+    VertexBuffer::new(game.get_display(),
     &[
         Vertex {
             position: [-1.0, 1.0, 0.0],

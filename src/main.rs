@@ -12,29 +12,26 @@ use graphics::textures::{load_texture,load_texture_srgb};
 pub mod math;
 use math::matrix::Matrix;
 use math::constants::FOV;
+mod game;
+use game::Game;
 
 fn main() {
-    use glium::{glutin, Surface};
+    let mut events_loop = glium::glutin::EventsLoop::new();
+    let mut game = Game::new(&events_loop);
 
-    let mut events_loop = glutin::EventsLoop::new();
-    let window = glutin::WindowBuilder::new();
-    let context = glutin::ContextBuilder::new().with_depth_buffer(24);
-    let display = glium::Display::new(window, context, &events_loop).unwrap();
+    let shape = create_billboard(&game);
 
-    let shape = create_billboard(&display);
+    let diffuse_texture = load_texture_srgb(&game, "./content/tuto-14-diffuse.jpg", image::JPEG);
+    let normal_map = load_texture(&game, "./content/tuto-14-normal.png", image::PNG);
 
-    let diffuse_texture = load_texture_srgb(&display, "./content/tuto-14-diffuse.jpg", image::JPEG);
-    let normal_map = load_texture(&display, "./content/tuto-14-normal.png", image::PNG);
-
-    let program = create_shader("./content/vertex_shader.glsl", "./content/fragment_shader.glsl", &display);
-
-    let mut closed = false;
+    let program = create_shader("./content/vertex_shader.glsl", "./content/fragment_shader.glsl", &game);
 
     let model: Matrix = Matrix::identity();
     let view: Matrix = Matrix::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]);
 
-    while !closed {
-        let mut target = display.draw();
+    use glium::Surface;
+    while game.is_running() {
+        let mut target = game.get_target();
         target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
         let perspective: Matrix = Matrix::perspective(target.get_dimensions(), FOV, (0.1f32,1024.0f32));
@@ -58,14 +55,6 @@ fn main() {
                     &params).unwrap();
         target.finish().unwrap();
 
-        events_loop.poll_events(|event| {
-            match event {
-                glutin::Event::WindowEvent { event, .. } => match event {
-                    glutin::WindowEvent::CloseRequested => closed = true,
-                    _ => ()
-                },
-                _ => (),
-            }
-        });
+        game = game.run_frame(&mut events_loop);
     }
 }
