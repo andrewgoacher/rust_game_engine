@@ -2,13 +2,12 @@
 extern crate glium;
 extern crate image;
 
-use std::fs::{File,read_to_string};
-
 mod io;
 use io::to_cursor;
 
 mod graphics;
 use graphics::shapes::create_billboard;
+use graphics::shader::create_shader;
 
 fn main() {
     use glium::{glutin, Surface};
@@ -38,16 +37,7 @@ fn main() {
     let image = glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions);
     let normal_map = glium::texture::Texture2d::new(&display, image).unwrap();
 
-
-    let vertex_shader_src = read_to_string("./content/vertex_shader.glsl")
-        .expect("Failed to find vertex shader");
-    let fragment_shader_src = read_to_string("./content/fragment_shader.glsl")
-        .expect("Failed to find fragment shader");
-
-    let program = glium::Program::from_source(&display,
-                                                &vertex_shader_src[..],
-                                                &fragment_shader_src[..],
-                                              None).unwrap();
+    let program = create_shader("./content/vertex_shader.glsl", "./content/fragment_shader.glsl", &display);
 
     let mut closed = false;
     while !closed {
