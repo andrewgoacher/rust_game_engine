@@ -11,6 +11,7 @@ use graphics::textures::{load_texture,load_texture_srgb};
 
 pub mod math;
 use math::matrix::Matrix;
+use math::constants::FOV;
 
 fn main() {
     use glium::{glutin, Surface};
@@ -31,7 +32,6 @@ fn main() {
 
     let model: Matrix = Matrix::identity();
     let view: Matrix = Matrix::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]);
-    const FOV: f32 = 3.141592 / 3.0;
 
     while !closed {
         let mut target = display.draw();
