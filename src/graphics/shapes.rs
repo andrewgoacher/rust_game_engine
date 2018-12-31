@@ -7,13 +7,13 @@ pub struct Vertex {
     tex_coords: [f32; 2],
 }
 
-use game::Game;
+use game::Engine;
 
 implement_vertex!(Vertex, position, normal, tex_coords);
 
-pub fn create_billboard(game: &Game) -> VertexBuffer<Vertex> {
+pub fn create_billboard(engine: &Engine) -> VertexBuffer<Vertex> {
     VertexBuffer::new(
-        game.get_display(),
+        engine.get_display(),
         &[
             Vertex {
                 position: [-1.0, 1.0, 0.0],

@@ -1,12 +1,12 @@
 use glium;
 
-pub struct Game {
+pub struct Engine {
     display: glium::Display,
     is_running: bool,
 }
 
-impl Game {
-    pub fn new(events_loop: &glium::glutin::EventsLoop) -> Game {
+impl Engine {
+    pub fn new(events_loop: &glium::glutin::EventsLoop) -> Engine {
         use glium::glutin;
 
         let window = glutin::WindowBuilder::new();
@@ -14,13 +14,13 @@ impl Game {
         let display = glium::Display::new(window, context, &events_loop)
             .expect("Failed to create glium display!");
 
-        Game {
+        Engine {
             display: display,
             is_running: true,
         }
     }
 
-    pub fn run_frame(self, events_loop: &mut glium::glutin::EventsLoop) -> Game {
+    pub fn run_frame(self, events_loop: &mut glium::glutin::EventsLoop) -> Engine {
         use glium::glutin;
 
         let mut running = self.is_running;
@@ -33,7 +33,7 @@ impl Game {
             _ => (),
         });
 
-        Game {
+        Engine {
             is_running: running,
             display: self.display,
         }

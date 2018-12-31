@@ -13,29 +13,29 @@ pub mod math;
 use math::constants::FOV;
 use math::matrix::Matrix;
 mod game;
-use game::Game;
+use game::Engine;
 
 fn main() {
     let mut events_loop = glium::glutin::EventsLoop::new();
-    let mut game = Game::new(&events_loop);
+    let mut engine = Engine::new(&events_loop);
 
-    let shape = create_billboard(&game);
+    let shape = create_billboard(&engine);
 
-    let diffuse_texture = load_texture_srgb(&game, "./content/tuto-14-diffuse.jpg", image::JPEG);
-    let normal_map = load_texture(&game, "./content/tuto-14-normal.png", image::PNG);
+    let diffuse_texture = load_texture_srgb(&engine, "./content/tuto-14-diffuse.jpg", image::JPEG);
+    let normal_map = load_texture(&engine, "./content/tuto-14-normal.png", image::PNG);
 
     let program = create_shader(
         "./content/vertex_shader.glsl",
         "./content/fragment_shader.glsl",
-        &game,
+        &engine,
     );
 
     let model: Matrix = Matrix::identity();
     let view: Matrix = Matrix::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]);
 
     use glium::Surface;
-    while game.is_running() {
-        let mut target = game.get_target();
+    while engine.is_running() {
+        let mut target = engine.get_target();
         target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
         let perspective: Matrix =
@@ -65,6 +65,6 @@ fn main() {
             ).unwrap();
         target.finish().unwrap();
 
-        game = game.run_frame(&mut events_loop);
+        engine = engine.run_frame(&mut events_loop);
     }
 }
