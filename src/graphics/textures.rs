@@ -20,11 +20,7 @@ pub fn load_texture_srgb(
     glium::texture::SrgbTexture2d::new(game.get_display(), image).unwrap()
 }
 
-pub fn load_texture(
-    game: &Game,
-    file_name: &str,
-    fmt: ImageFormat,
-) -> glium::texture::Texture2d {
+pub fn load_texture(game: &Game, file_name: &str, fmt: ImageFormat) -> glium::texture::Texture2d {
     let file =
         File::open(&file_name).expect(format!("Could not find file {}", &file_name).as_str());
     let image = image::load(to_cursor(file), fmt).unwrap().to_rgba();

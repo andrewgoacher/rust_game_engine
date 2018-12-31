@@ -1,8 +1,8 @@
 use glium;
 use glium::Program;
 
-use std::fs::read_to_string;
 use game::Game;
+use std::fs::read_to_string;
 
 pub fn create_shader(vertex: &str, fragment: &str, game: &Game) -> Program {
     let vertex_shader_src =
