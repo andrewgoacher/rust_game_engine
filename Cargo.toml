@@ -12,7 +12,7 @@ image = "*"
 
 [lib]
 name = "rust_game_engine"
-path = "src/lib/lib.rs"
+path = "lib/lib.rs"
 
 [[bin]]
 name = "rust_game"
