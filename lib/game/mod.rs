@@ -1,5 +1,9 @@
 use glium;
 
+pub trait Game {
+    fn on_frame(self, engine: &Engine) -> Box<Game>;
+}
+
 pub struct Engine {
     display: glium::Display,
     is_running: bool,
@@ -20,23 +24,30 @@ impl Engine {
         }
     }
 
-    pub fn run_frame(self, events_loop: &mut glium::glutin::EventsLoop) -> Engine {
-        use glium::glutin;
+    pub fn run(self, events_loop: &mut glium::glutin::EventsLoop, game: Box<Game>) -> Engine {
+        use glium::{glutin, Surface};
+        let mut running = true;
+        let mut game = game;
 
-        let mut running = self.is_running;
+        while self.is_running() {
+            let mut target = self.get_target();
+            target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
-        events_loop.poll_events(|event| match event {
-            glutin::Event::WindowEvent { event, .. } => match event {
-                glutin::WindowEvent::CloseRequested => running = false,
+            game = game.on_frame(&self);
+
+            events_loop.poll_events(|event| match event {
+                glutin::Event::WindowEvent { event, .. } => match event {
+                    glutin::WindowEvent::CloseRequested => running = false,
+                    _ => (),
+                },
                 _ => (),
-            },
-            _ => (),
-        });
-
-        Engine {
-            is_running: running,
-            display: self.display,
+            });
         }
+
+        Engine { 
+            is_running: running,
+            ..self
+         }
     }
 
     pub fn is_running(&self) -> bool {
