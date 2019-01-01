@@ -1,2 +1,3 @@
 pub mod matrix;
-pub mod constants;
+
+pub const FOV: f32 = 3.141592 / 3.0;

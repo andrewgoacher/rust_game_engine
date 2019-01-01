@@ -11,7 +11,7 @@ use game::Engine;
 use graphics::shader::create_shader;
 use graphics::shapes::create_billboard;
 use graphics::{load_texture, TextureConvert};
-use math::constants::FOV;
+use math::FOV;
 use math::matrix::Matrix;
 
 pub fn demo() -> () {
