@@ -7,13 +7,12 @@ pub mod graphics;
 pub mod io;
 pub mod math;
 
+use game::Engine;
 use graphics::shader::create_shader;
 use graphics::shapes::create_billboard;
-use graphics::textures::{load_texture, load_texture_srgb};
+use graphics::{load_texture, TextureConvert};
 use math::constants::FOV;
 use math::matrix::Matrix;
-use game::Engine;
-
 
 pub fn demo() -> () {
     let mut events_loop = glium::glutin::EventsLoop::new();
@@ -21,8 +20,10 @@ pub fn demo() -> () {
 
     let shape = create_billboard(&engine);
 
-    let diffuse_texture = load_texture_srgb(&engine, "./content/tuto-14-diffuse.jpg", image::JPEG);
-    let normal_map = load_texture(&engine, "./content/tuto-14-normal.png", image::PNG);
+    let diffuse_texture =
+        load_texture("./content/tuto-14-diffuse.jpg").as_srgb_texture_2d(&engine);
+
+    let normal_map = load_texture("./content/tuto-14-normal.png").as_texture_2d(&engine);
 
     let program = create_shader(
         "./content/vertex_shader.glsl",
