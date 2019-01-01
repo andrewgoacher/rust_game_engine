@@ -8,9 +8,8 @@ pub mod io;
 pub mod math;
 
 use game::Engine;
-use graphics::shader::create_shader;
 use graphics::shapes::create_billboard;
-use graphics::{load_texture, TextureConvert};
+use graphics::{load_texture, TextureConvert,create_shader};
 use math::FOV;
 use math::matrix::Matrix;
 
