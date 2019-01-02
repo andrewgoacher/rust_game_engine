@@ -1,5 +1,4 @@
 extern crate rust_game_engine;
-use rust_game_engine::demo;
 use rust_game_engine::game::Engine;
 use rust_game_engine::game::Game;
 use rust_game_engine::graphics::shapes::{create_billboard, Vertex};
@@ -38,13 +37,11 @@ impl DemoGame {
 }
 
 impl Game for DemoGame {
-    fn on_frame(self, engine: &Engine) -> Box<Game> {
+    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> Box<DemoGame> {
         use glium::Surface;
 
-        let mut target = engine.get_target();
-
         let perspective: Matrix =
-            Matrix::perspective(target.get_dimensions(), FOV, (0.1f32, 1024.0f32));
+            Matrix::perspective(frame.get_dimensions(), FOV, (0.1f32, 1024.0f32));
 
         let light = [1.4, 0.4, 0.7f32];
 
@@ -57,7 +54,7 @@ impl Game for DemoGame {
             ..Default::default()
         };
 
-        target
+        frame
             .draw(
                 &self.shape,
                 glium::index::NoIndices(glium::index::PrimitiveType::TriangleStrip),

@@ -1,7 +1,7 @@
 use glium;
 
 pub trait Game {
-    fn on_frame(self, engine: &Engine) -> Box<Game>;
+    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> Box<Self>;
 }
 
 pub struct Engine {
@@ -24,16 +24,16 @@ impl Engine {
         }
     }
 
-    pub fn run(self, events_loop: &mut glium::glutin::EventsLoop, game: Box<Game>) -> Engine {
+    pub fn run<T: Game>(self, events_loop: &mut glium::glutin::EventsLoop, game: Box<T>) -> Engine {
         use glium::{glutin, Surface};
-        let mut running = true;
+        let mut running = self.is_running();
         let mut game = game;
 
-        while self.is_running() {
-            let mut target = self.get_target();
+        while running {
+            let mut target = self.display.draw();
             target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
-            game = game.on_frame(&self);
+            game = game.on_frame(&mut target, &self);
 
             events_loop.poll_events(|event| match event {
                 glutin::Event::WindowEvent { event, .. } => match event {
@@ -42,6 +42,7 @@ impl Engine {
                 },
                 _ => (),
             });
+            target.finish().unwrap();
         }
 
         Engine { 
@@ -56,9 +57,5 @@ impl Engine {
 
     pub fn get_display<'a>(&'a self) -> &'a glium::Display {
         &self.display
-    }
-
-    pub fn get_target(&self) -> glium::Frame {
-        self.display.draw()
     }
 }
