@@ -12,8 +12,8 @@ newmtl HULL
 	Kd 0.8000 0.7922 0.7922
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka C:\Documents and Settings\glenn\Desktop\falcon.jpg
-	map_Kd C:\Documents and Settings\glenn\Desktop\falcon.jpg
+	map_Ka falcon.jpg
+	map_Kd falcon.jpg
 
 newmtl GUN
 	Ns 1.0000
