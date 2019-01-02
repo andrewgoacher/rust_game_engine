@@ -1,7 +1,7 @@
 use glium;
 
 pub trait Game {
-    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> Box<Self>;
+    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> Self;
 }
 
 pub struct Engine {
@@ -24,7 +24,7 @@ impl Engine {
         }
     }
 
-    pub fn run<T: Game>(self, events_loop: &mut glium::glutin::EventsLoop, game: Box<T>) -> Engine {
+    pub fn run<T: Game>(self, events_loop: &mut glium::glutin::EventsLoop, game: T) -> Engine {
         use glium::{glutin, Surface};
         let mut running = self.is_running();
         let mut game = game;

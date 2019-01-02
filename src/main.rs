@@ -37,7 +37,7 @@ impl DemoGame {
 }
 
 impl Game for DemoGame {
-    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> Box<DemoGame> {
+    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> DemoGame {
         use glium::Surface;
 
         let perspective: Matrix =
@@ -66,7 +66,7 @@ impl Game for DemoGame {
                 &params,
             ).unwrap();
 
-        Box::new(DemoGame { ..self })
+        DemoGame { ..self }
     }
 }
 
@@ -75,7 +75,7 @@ fn main() {
     let engine = Engine::new(&events_loop);
     let game = DemoGame::new(&engine);
 
-    engine.run(&mut events_loop, Box::new(game));
+    engine.run(&mut events_loop, game);
 
     ()
 }
