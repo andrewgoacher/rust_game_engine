@@ -1,5 +1,9 @@
 use glium;
 
+pub trait Game {
+    fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> Box<Self>;
+}
+
 pub struct Engine {
     display: glium::Display,
     is_running: bool,
@@ -20,23 +24,31 @@ impl Engine {
         }
     }
 
-    pub fn run_frame(self, events_loop: &mut glium::glutin::EventsLoop) -> Engine {
-        use glium::glutin;
+    pub fn run<T: Game>(self, events_loop: &mut glium::glutin::EventsLoop, game: Box<T>) -> Engine {
+        use glium::{glutin, Surface};
+        let mut running = self.is_running();
+        let mut game = game;
 
-        let mut running = self.is_running;
+        while running {
+            let mut target = self.display.draw();
+            target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
-        events_loop.poll_events(|event| match event {
-            glutin::Event::WindowEvent { event, .. } => match event {
-                glutin::WindowEvent::CloseRequested => running = false,
+            game = game.on_frame(&mut target, &self);
+
+            events_loop.poll_events(|event| match event {
+                glutin::Event::WindowEvent { event, .. } => match event {
+                    glutin::WindowEvent::CloseRequested => running = false,
+                    _ => (),
+                },
                 _ => (),
-            },
-            _ => (),
-        });
-
-        Engine {
-            is_running: running,
-            display: self.display,
+            });
+            target.finish().unwrap();
         }
+
+        Engine { 
+            is_running: running,
+            ..self
+         }
     }
 
     pub fn is_running(&self) -> bool {
@@ -45,9 +57,5 @@ impl Engine {
 
     pub fn get_display<'a>(&'a self) -> &'a glium::Display {
         &self.display
-    }
-
-    pub fn get_target(&self) -> glium::Frame {
-        self.display.draw()
     }
 }
