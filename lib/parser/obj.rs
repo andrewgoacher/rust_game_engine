@@ -1,8 +1,11 @@
+#[derive(Debug)]
+
 pub enum Face {
     VertexTextureNormal(VTN),
     VertexNormal(VN),
 }
 
+#[derive(Debug)]
 pub struct VTN {
     v: u32,
     t: u32,
@@ -11,6 +14,7 @@ pub struct VTN {
     material: String,
 }
 
+#[derive(Debug)]
 pub struct VN {
     v: u32,
     n: u32,
@@ -18,6 +22,7 @@ pub struct VN {
     material: String,
 }
 
+#[derive(Debug)]
 pub struct Vertex {
     x: f32,
     y: f32,
@@ -40,6 +45,7 @@ impl Vertex {
     }
 }
 
+#[derive(Debug)]
 pub struct VertexPoint {
     u: f32,
     v: f32,
@@ -56,6 +62,7 @@ impl VertexPoint {
     }
 }
 
+#[derive(Debug)]
 pub struct VertexNormal {
     i: f32,
     j: f32,
@@ -68,6 +75,7 @@ impl VertexNormal {
     }
 }
 
+#[derive(Debug)]
 pub struct VertexTexture {
     u: f32,
     v: f32,
@@ -84,6 +92,7 @@ impl VertexTexture {
     }
 }
 
+#[derive(Debug)]
 pub struct ObjectFile {
     materials: Vec<String>,
     vertices: Vec<Vertex>,
@@ -92,11 +101,13 @@ pub struct ObjectFile {
     vertex_textures: Vec<VertexTexture>,
     faces: Vec<Face>,
     groups: Vec<String>,
+    surfaces: Vec<Surface>,
 }
 
 use std::fs::File;
-use std::io::{BufReader, BufRead};
+use std::io::{BufRead, BufReader};
 
+#[derive(Debug)]
 
 enum Token {
     Vertex(String),
@@ -107,44 +118,130 @@ enum Token {
     Surface(String),
     UseMaterial(String),
     Group(String),
-    Unused
+    Unused,
+}
+
+fn get_token_inner(token: &str, rest: &str) -> Token {
+  match token {
+        "#" => Token::Unused,
+        "v" => Token::Vertex(String::from(rest)),
+        "vn" => Token::VertexNormal(String::from(rest)),
+        "vp" => Token::VertexPoint(String::from(rest)),
+        "vt" => Token::VertexTexture(String::from(rest)),
+        "f" => Token::Face(String::from(rest)),
+        "s" => Token::Surface(String::from(rest)),
+        "usemtl" => Token::UseMaterial(String::from(rest)),
+        "g" => Token::Group(String::from(rest)),
+        _ => Token::Unused
+    }
 }
 
 fn get_token(input: &String) -> Token {
-    const r: &str = "^(.+) (*)$";
+    const r: &str = "^(.+) (.*)$";
 
     use regex::Regex;
     let re = Regex::new(r).unwrap();
-    let captures = re.captures(&input).unwrap();
+    match re.captures(&input) {
+        Some(captures) => {
+            let capture_1 = &captures[1];
+            let capture = &captures[2];
 
-    match &captures[0] {
-        "#" => Token::Unused,
-        "v" => Token::Vertex(String::from(&captures[1])),
-        "vn" => Token::VertexNormal(String::from(&captures[1])),
-        "vp" => Token::VertexPoint(String::from(&captures[1])),
-        "vt" => Token::VertexTexture(String::from(&captures[1])),
-        "f" => Token::Face(String::from(&captures[1])),
-        "s" => Token::Surface(String::from(&captures[1])),
-        "usemtl" => Token::UseMaterial(String::from(&captures[1])),
-        "g" => Token::Group(String::from(&captures[1])),
-        _ => panic!("unknown token")
+            get_token_inner(&capture_1, &capture)
+        },
+        None => Token::Unused
     }
 }
 
 fn parse_vertex(line: &String) -> Vertex {
-    Vertex::new(1.0,2.0,3.0)
+    const vertex_regex: &str = r#"(-?\d+\.?\d?) (-?\d+\.?\d?) (-?\d+\.?\d?) (-?\d+\.?\d?)?"#;
+    use regex::Regex;
+    let re = Regex::new(vertex_regex).unwrap();
+
+    let captures = re.captures(&line).unwrap();
+    let len = captures.len();
+    let (x, y, z) = (&captures[1], &captures[2], &captures[3]);
+
+    let vertex = Vertex::new(
+        x.parse::<f32>().unwrap(),
+        y.parse::<f32>().unwrap(),
+        z.parse::<f32>().unwrap(),
+    );
+
+    match len {
+        4 => vertex.with_w(captures[4].parse::<f32>().unwrap()),
+        _ => vertex,
+    }
 }
 
 fn parse_normals(line: &String) -> VertexNormal {
-    VertexNormal::new(1.0, 2.0, 3.0)
+    const vertex_regex: &str = r#"(-?\d+\.?\d?) (-?\d+\.?\d?) (-?\d+\.?\d?)"#;
+    use regex::Regex;
+    let re = Regex::new(vertex_regex).unwrap();
+
+    let captures = re.captures(&line).unwrap();
+    let len = captures.len();
+    let (i, j, k) = (&captures[1], &captures[2], &captures[3]);
+
+    VertexNormal::new(
+        i.parse::<f32>().unwrap(),
+        j.parse::<f32>().unwrap(),
+        k.parse::<f32>().unwrap(),
+    )
 }
 
 fn parse_points(line: &String) -> VertexPoint {
-    VertexPoint::new(1.0, 2.0) 
+    const vertex_regex: &str = r#"(-?\d+\.?\d?) (-?\d+\.?\d?) (-?\d+\.?\d?)?"#;
+    use regex::Regex;
+    let re = Regex::new(vertex_regex).unwrap();
+
+    let captures = re.captures(&line).unwrap();
+    let len = captures.len();
+    let (u, v) = (&captures[1], &captures[2]);
+
+    let vertex = VertexPoint::new(u.parse::<f32>().unwrap(), v.parse::<f32>().unwrap());
+
+    match len {
+        3 => vertex.with_w(captures[3].parse::<f32>().unwrap()),
+        _ => vertex,
+    }
+}
+
+fn parse_textures(line: &String) -> VertexTexture {
+    const vertex_regex: &str = r#"(-?\d+\.?\d?) (-?\d+\.?\d?) (-?\d+\.?\d?)?"#;
+    use regex::Regex;
+    let re = Regex::new(vertex_regex).unwrap();
+
+    let captures = re.captures(&line).unwrap();
+    let len = captures.len();
+    let (u, v) = (&captures[1], &captures[2]);
+
+    let vertex = VertexTexture::new(u.parse::<f32>().unwrap(), v.parse::<f32>().unwrap());
+
+    match len {
+        3 => vertex.with_w(captures[3].parse::<f32>().unwrap()),
+        _ => vertex,
+    }
+}
+
+fn parse_face(line: &String) -> Face {
+    panic!("Don't have a face")
+}   
+
+fn parse_surface(line: &String) -> Surface {
+    match &line[..] {
+        "off" => Surface::Off,
+        x => Surface::On(x.parse::<u32>().unwrap())
+    }
+}
+
+#[derive(Debug)]
+enum Surface {
+    On(u32),
+    Off
 }
 
 impl ObjectFile {
-    fn parse(file: &str) -> Option<ObjectFile> {
+    pub fn parse(file: &str) -> Option<ObjectFile> {
         let mut materials: Vec<String> = Vec::new();
         let mut vertices: Vec<Vertex> = Vec::new();
         let mut points: Vec<VertexPoint> = Vec::new();
@@ -152,10 +249,11 @@ impl ObjectFile {
         let mut textures: Vec<VertexTexture> = Vec::new();
         let mut faces: Vec<Face> = Vec::new();
         let mut groups: Vec<String> = Vec::new();
+        let mut surfaces: Vec<Surface> = Vec::new();
 
         let file = match File::open(&file) {
             Ok(f) => f,
-            _ => return None
+            _ => return None,
         };
 
         let mut buffer = BufReader::new(&file);
@@ -165,8 +263,13 @@ impl ObjectFile {
             match get_token(&l) {
                 Token::Vertex(s) => vertices.push(parse_vertex(&s)),
                 Token::VertexNormal(s) => normals.push(parse_normals(&s)),
+                Token::VertexTexture(s) => textures.push(parse_textures(&s)),
                 Token::VertexPoint(s) => points.push(parse_points(&s)),
-                _ => ()
+                // Token::Face(s) => faces.push(parse_face(&s)),
+                Token::Group(s) => groups.push(s.clone()),
+                Token::UseMaterial(s) => materials.push(s.clone()),
+                Token::Surface(s) => surfaces.push(parse_surface(&s)),
+                _ => (),
             }
         }
 
@@ -178,6 +281,7 @@ impl ObjectFile {
             vertex_textures: textures,
             faces: faces,
             groups: groups,
+            surfaces: surfaces,
         })
     }
 }
