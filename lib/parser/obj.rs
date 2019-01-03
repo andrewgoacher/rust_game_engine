@@ -58,31 +58,7 @@ pub enum Dissolve {
     Halo(f32),
 }
 
-pub enum Tf {
-    RGB(f32, f32, f32),
-    Spectral(String, f32),
-    XYZ(f32, f32, f32),
-}
-
-pub enum Ka {
-    RGB(f32, f32, f32),
-    Spectral(String, f32),
-    XYZ(f32, f32, f32),
-}
-
-pub enum Kd {
-    RGB(f32, f32, f32),
-    Spectral(String, f32),
-    XYZ(f32, f32, f32),
-}
-
-pub enum Ks {
-    RGB(f32, f32, f32),
-    Spectral(String, f32),
-    XYZ(f32, f32, f32),
-}
-
-pub enum Ke {
+pub enum Reflectivity {
     RGB(f32, f32, f32),
     Spectral(String, f32),
     XYZ(f32, f32, f32),
@@ -97,17 +73,17 @@ pub struct Material {
     // d: Tr = 1-d
     dissolve: Dissolve,
     // Tf
-    transmission_filter: Tf,
+    transmission_filter: Reflectivity,
     // illum
     illumination_model: u32,
     // Ka
-    ambient_reflectivity: Ka,
+    ambient_reflectivity: Reflectivity,
     // Kd
-    diffuse_reflectivity: Kd,
+    diffuse_reflectivity: Reflectivity,
     // Ks
-    specular_reflectivity: Ks,
+    specular_reflectivity: Reflectivity,
     // Ke
-    emissive_coefficient: Ke,
-    map_Ka: String,
-    map_Kd: String
+    emissive_coefficient: Reflectivity,
+    map_ka: String,
+    map_kd: String
 }
