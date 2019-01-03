@@ -94,8 +94,57 @@ pub struct ObjectFile {
     groups: Vec<String>,
 }
 
+use std::fs::File;
+use std::io::{BufReader, BufRead};
+
+
+enum Token {
+    Vertex,
+    VertexNormal,
+    VertexTexture,
+    VertexPoint,
+    Face,
+    Surface,
+    UseMaterial,
+    Group,
+    Unused
+}
+
+fn get_token(input: &String) -> Token {
+    const r: &str = "^(.+) *$";
+
+    use regex::Regex;
+    let re = Regex::new(r).unwrap();
+    let captures = re.captures(&input).unwrap();
+
+    match &captures[0] {
+        "#" => Token::Unused,
+        "v" => Token::Vertex,
+        "vn" => Token::VertexNormal,
+        "vp" => Token::VertexPoint,
+        "vt" => Token::VertexTexture,
+        "f" => Token::Face,
+        "s" => Token::Surface,
+        "usemtl" => Token::UseMaterial,
+        "g" => Token::Group,
+        _ => panic!("unknown token")
+    }
+}
+
+fn parse_vertex(line: &String) -> Vertex {
+    Vertex::new(1.0,2.0,3.0)
+}
+
+fn parse_normals(line: &String) -> VertexNormal {
+    VertexNormal::new(1.0, 2.0, 3.0)
+}
+
+fn parse_points(line: &String) -> VertexPoint {
+    VertexPoint::new(1.0, 2.0) 
+}
+
 impl ObjectFile {
-    fn parse(file: &str) -> ObjectFile {
+    fn parse(file: &str) -> Option<ObjectFile> {
         let mut materials: Vec<String> = Vec::new();
         let mut vertices: Vec<Vertex> = Vec::new();
         let mut points: Vec<VertexPoint> = Vec::new();
@@ -104,7 +153,24 @@ impl ObjectFile {
         let mut faces: Vec<Face> = Vec::new();
         let mut groups: Vec<String> = Vec::new();
 
-        ObjectFile {
+        let file = match File::open(&file) {
+            Ok(f) => f,
+            _ => return None
+        };
+
+        let mut buffer = BufReader::new(&file);
+
+        for line in buffer.lines() {
+            let l = line.unwrap();
+            match get_token(&l) {
+                Token::Vertex => vertices.push(parse_vertex(&l)),
+                Token::VertexNormal => normals.push(parse_normals(&l)),
+                Token::VertexPoint => points.push(parse_points(&l)),
+                _ => ()
+            }
+        }
+
+        Some(ObjectFile {
             materials: materials,
             vertices: vertices,
             vertex_points: points,
@@ -112,7 +178,7 @@ impl ObjectFile {
             vertex_textures: textures,
             faces: faces,
             groups: groups,
-        }
+        })
     }
 }
 
