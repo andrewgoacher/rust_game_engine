@@ -99,19 +99,19 @@ use std::io::{BufReader, BufRead};
 
 
 enum Token {
-    Vertex,
-    VertexNormal,
-    VertexTexture,
-    VertexPoint,
-    Face,
-    Surface,
-    UseMaterial,
-    Group,
+    Vertex(String),
+    VertexNormal(String),
+    VertexTexture(String),
+    VertexPoint(String),
+    Face(String),
+    Surface(String),
+    UseMaterial(String),
+    Group(String),
     Unused
 }
 
 fn get_token(input: &String) -> Token {
-    const r: &str = "^(.+) *$";
+    const r: &str = "^(.+) (*)$";
 
     use regex::Regex;
     let re = Regex::new(r).unwrap();
@@ -119,14 +119,14 @@ fn get_token(input: &String) -> Token {
 
     match &captures[0] {
         "#" => Token::Unused,
-        "v" => Token::Vertex,
-        "vn" => Token::VertexNormal,
-        "vp" => Token::VertexPoint,
-        "vt" => Token::VertexTexture,
-        "f" => Token::Face,
-        "s" => Token::Surface,
-        "usemtl" => Token::UseMaterial,
-        "g" => Token::Group,
+        "v" => Token::Vertex(String::from(&captures[1])),
+        "vn" => Token::VertexNormal(String::from(&captures[1])),
+        "vp" => Token::VertexPoint(String::from(&captures[1])),
+        "vt" => Token::VertexTexture(String::from(&captures[1])),
+        "f" => Token::Face(String::from(&captures[1])),
+        "s" => Token::Surface(String::from(&captures[1])),
+        "usemtl" => Token::UseMaterial(String::from(&captures[1])),
+        "g" => Token::Group(String::from(&captures[1])),
         _ => panic!("unknown token")
     }
 }
@@ -163,9 +163,9 @@ impl ObjectFile {
         for line in buffer.lines() {
             let l = line.unwrap();
             match get_token(&l) {
-                Token::Vertex => vertices.push(parse_vertex(&l)),
-                Token::VertexNormal => normals.push(parse_normals(&l)),
-                Token::VertexPoint => points.push(parse_points(&l)),
+                Token::Vertex(s) => vertices.push(parse_vertex(&s)),
+                Token::VertexNormal(s) => normals.push(parse_normals(&s)),
+                Token::VertexPoint(s) => points.push(parse_points(&s)),
                 _ => ()
             }
         }
