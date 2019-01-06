@@ -88,13 +88,12 @@ fn main() {
     let file = File::open("./content/Millenium Falcon/millenium-falcon.obj").unwrap();
     let mut reader = BufReader::new(file);
 
-    match Meshes::load(&mut reader) {
-        Ok(m) => println!("This shouldn't work right now"),
+    let mesh = match Meshes::load(&mut reader) {
+        Ok(m) => m,
         Err(e) => match e {
-            MeshLoadError::UnknownTokenError(err) => println!("Unknown token: {}", err),
-            MeshLoadError::GeneralError => println!("General mesh load error"),
-            MeshLoadError::ParseError(err) => println!("Parsing error: {}", err),
-            _ => println!("Unresolved mesh load error")
+            MeshLoadError::UnknownTokenError(err) => panic!("Unknown token: {}", err),
+            MeshLoadError::ParseError(err) => panic!("Parsing error: {}", err),
+            _ => panic!("Unresolved mesh load error")
         }
     };
 
