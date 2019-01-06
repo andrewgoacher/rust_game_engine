@@ -4,7 +4,30 @@ use std::io::{BufRead, BufReader};
 
 #[derive(Debug)]
 pub struct Meshes {
+    meshes: Vec<Mesh>
+}
+
+#[derive(Debug)]
+pub struct Mesh {
     vertices: Vec<Vertex>,
+    name: String,
+    material: String
+}
+
+impl Mesh {
+    fn new(name: String, material: String, vertices: Vec<Vertex>) -> Mesh {
+        Mesh {
+            name: name,
+            material: material,
+            vertices: vertices
+        }
+    }
+
+    fn print(&self) -> () {
+        println!("\t\tMesh: {}", self.name);
+        println!("\t\t\tmaterial: {}", self.material);
+        println!("\t\t\tNum vertices: {}", self.vertices.len());
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -170,12 +193,12 @@ impl Meshes {
         let now = SystemTime::now();
 
         let mut material_files: Vec<String> = Vec::new();
-        let mut group_name: String = "unknown group".to_owned();
         let mut current_material: String = "unknown material".to_owned();
         let mut faces: Vec<Vertex> = Vec::new();
         let mut vertex_normals: Vec<Vec3> = Vec::new();
         let mut vertex_textures: Vec<[f32; 3]> = Vec::new();
         let mut vertices: Vec<Vec4> = Vec::new();
+        let mut meshes: Vec<Mesh> = Vec::new();
 
         let file = File::open(&file).expect("file not found");
         let mut reader = BufReader::new(&file);
@@ -212,7 +235,13 @@ impl Meshes {
                         Err(e) => return Err(e),
                     };
                 }
-                "g" => group_name = String::from(rest[0]),
+                "g" => {
+                    let group_name = String::from(rest[0]);
+                    if faces.len() == 0 { continue; }
+
+                    meshes.push(Mesh::new(group_name, current_material.clone(), faces.clone()));
+                    faces.clear();   
+                },
                 "usemtl" => current_material = String::from(rest[0]),
                 "f" => match parse_face(rest, &vertices, &vertex_normals, &vertex_textures) {
                     Ok(f) => faces.extend_from_slice(&f[..]),
@@ -236,6 +265,14 @@ impl Meshes {
             }
         }
 
-        Ok(Meshes { vertices: faces })
+        Ok(Meshes { meshes: meshes })
+    }
+
+    pub fn print(&self) -> () {
+        println!("Total meshes: {}", self.meshes.len());
+
+        for mesh in self.meshes.iter() {
+            mesh.print();
+        }
     }
 }

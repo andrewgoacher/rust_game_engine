@@ -96,6 +96,7 @@ fn main() {
 
 
   //  println!("{:?}", o);
+  mesh.print();
 
     ()
 }
