@@ -9,6 +9,7 @@ repository = "https://github.com/andrewgoacher/rust_game_engine"
 [dependencies]
 glium = "*"
 image = "*"
+regex = "1.1.0"
 
 [lib]
 name = "rust_game_engine"

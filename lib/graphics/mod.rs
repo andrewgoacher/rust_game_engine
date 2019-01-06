@@ -1,4 +1,5 @@
 pub mod shapes;
+pub mod mesh;
 
 use glium;
 use glium::Program;

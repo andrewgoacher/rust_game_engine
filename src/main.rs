@@ -6,6 +6,8 @@ use rust_game_engine::graphics::{create_shader, load_texture, TextureConvert};
 use rust_game_engine::math::matrix::Matrix;
 use rust_game_engine::math::FOV;
 
+use rust_game_engine::graphics::mesh::{Meshes,MeshLoadError};
+
 #[macro_use]
 extern crate glium;
 
@@ -71,11 +73,30 @@ impl Game for DemoGame {
 }
 
 fn main() {
-    let mut events_loop = glium::glutin::EventsLoop::new();
-    let engine = Engine::new(&events_loop);
-    let game = DemoGame::new(&engine);
+    use std::fs::File;
+    use std::io::{BufRead,BufReader};
+    // let mut events_loop = glium::glutin::EventsLoop::new();
+    // let engine = Engine::new(&events_loop);
+    // let game = DemoGame::new(&engine);
 
-    engine.run(&mut events_loop, game);
+    // engine.run(&mut events_loop, game);
+    // let o = match  ObjectFile::parse("./content/Millenium Falcon/millenium-falcon.obj") {
+    //     Some(s) => s,
+    //     None => panic!("No object file")
+    // };
+
+    let mesh = match Meshes::load("./content/Millenium Falcon/millenium-falcon.obj") {
+        Ok(m) => m,
+        Err(e) => match e {
+            MeshLoadError::UnknownTokenError(err) => panic!("Unknown token: {}", err),
+            MeshLoadError::ParseError(err) => panic!("Parsing error: {}", err),
+            _ => panic!("Unresolved mesh load error")
+        }
+    };
+
+
+  //  println!("{:?}", o);
+  mesh.print();
 
     ()
 }
