@@ -6,7 +6,7 @@ use rust_game_engine::graphics::{create_shader, load_texture, TextureConvert};
 use rust_game_engine::math::matrix::Matrix;
 use rust_game_engine::math::FOV;
 
-use rust_game_engine::parser::obj::{Meshes,MeshLoadError};
+use rust_game_engine::graphics::mesh::{Meshes,MeshLoadError};
 
 #[macro_use]
 extern crate glium;
@@ -85,10 +85,7 @@ fn main() {
     //     None => panic!("No object file")
     // };
 
-    let file = File::open("./content/Millenium Falcon/millenium-falcon.obj").unwrap();
-    let mut reader = BufReader::new(file);
-
-    let mesh = match Meshes::load(&mut reader) {
+    let mesh = match Meshes::load("./content/Millenium Falcon/millenium-falcon.obj") {
         Ok(m) => m,
         Err(e) => match e {
             MeshLoadError::UnknownTokenError(err) => panic!("Unknown token: {}", err),

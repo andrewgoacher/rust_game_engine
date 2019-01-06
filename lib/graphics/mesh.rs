@@ -1,51 +1,10 @@
-use std::io::BufRead;
-use std::str::SplitWhitespace;
+use math::{Vec3, Vec4};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 #[derive(Debug)]
 pub struct Meshes {
     vertices: Vec<Vertex>,
-}
-
-pub enum MeshLoadError {
-    ParseError(String),
-    UnknownTokenError(String),
-}
-
-pub type MeshLoadResult = Result<Meshes, MeshLoadError>;
-type Vec3 = [f32; 3];
-type Vec4 = [f32; 4];
-type ParseFloat4Result = Result<Vec4, MeshLoadError>;
-type ParseFloat3Result = Result<Vec3, MeshLoadError>;
-type ParseFaceResult = Result<Vec<Vertex>, MeshLoadError>;
-
-fn parse_float4(parts: &[&str], default: f32) -> ParseFloat4Result {
-    let mut result = [default; 4];
-    for (i, p) in parts.iter().enumerate() {
-        match p.parse::<f32>() {
-            Ok(f) => result[i] = f,
-            Err(_) => {
-                return Err(MeshLoadError::ParseError(String::from(
-                    "Couldn't parse floats",
-                )))
-            }
-        };
-    }
-    Ok(result)
-}
-
-fn parse_float3(parts: &[&str], default: f32) -> ParseFloat3Result {
-    let mut result = [default; 3];
-    for (i, p) in parts.iter().enumerate() {
-        match p.parse::<f32>() {
-            Ok(f) => result[i] = f,
-            Err(_) => {
-                return Err(MeshLoadError::ParseError(String::from(
-                    "Couldn't parse floats",
-                )))
-            }
-        };
-    }
-    Ok(result)
 }
 
 #[derive(Debug, Clone)]
@@ -74,18 +33,61 @@ pub enum Vertex {
     PositionNormal(VertexPositionNormal),
 }
 
+pub enum MeshLoadError {
+    ParseError(String),
+    UnknownTokenError(String),
+}
+
+pub type MeshLoadResult = Result<Meshes, MeshLoadError>;
+type ParseFloatResult<T> = Result<T, MeshLoadError>;
+type ParseFaceResult = Result<Vec<Vertex>, MeshLoadError>;
+
+fn parse_float4(parts: &[&str], default_w: f32) -> ParseFloatResult<Vec4> {
+    let mut result = [default_w; 4];
+    for (i, p) in parts.iter().enumerate() {
+        match p.parse::<f32>() {
+            Ok(f) => result[i] = f,
+            Err(_) => {
+                return Err(MeshLoadError::ParseError(String::from(
+                    "(float4): Couldn't parse floats",
+                )))
+            }
+        };
+    }
+    Ok(result)
+}
+
+fn parse_float3(parts: &[&str], default: f32) -> ParseFloatResult<Vec3> {
+    let mut result = [default; 3];
+    for (i, p) in parts.iter().enumerate() {
+        match p.parse::<f32>() {
+            Ok(f) => result[i] = f,
+            Err(_) => {
+                return Err(MeshLoadError::ParseError(String::from(
+                    "(float3): Couldn't parse floats",
+                )))
+            }
+        };
+    }
+    Ok(result)
+}
+
 fn parse_vertex_normal(
     s: &String,
     vertices: &Vec<[f32; 4]>,
     normals: &Vec<[f32; 3]>,
-) -> VertexPositionNormal {
+) -> Result<VertexPositionNormal, String> {
     let parts = s.split("//").collect::<Vec<&str>>();
-    let vIndex = parts[0].parse::<usize>().unwrap();
-    let nIndex = parts[1].parse::<usize>().unwrap();
 
-    VertexPositionNormal {
-        position: vertices[vIndex - 1],
-        normal: normals[nIndex - 1],
+    match parts[0].parse::<usize>() {
+        Ok(vIndex) => match parts[1].parse::<usize>() {
+            Ok(nIndex) => Ok(VertexPositionNormal {
+                position: vertices[vIndex - 1],
+                normal: normals[nIndex - 1],
+            }),
+            Err(_) => Err("Error parsing vertex normal".to_owned()),
+        },
+        Err(_) => Err("Error parsing vertex normal".to_owned()),
     }
 }
 
@@ -94,15 +96,20 @@ fn parse_vertex_texture_normal(
     vertices: &Vec<Vec4>,
     textures: &Vec<Vec3>,
     normals: &Vec<Vec3>,
-) -> VertexPositionNormalTexture {
-    let vIndex = parts[0].parse::<usize>().unwrap();
-    let tIndex = parts[1].parse::<usize>().unwrap();
-    let nIndex = parts[2].parse::<usize>().unwrap();
-
-    VertexPositionNormalTexture {
-        position: vertices[vIndex - 1],
-        normal: normals[nIndex - 1],
-        texture: textures[tIndex - 1],
+) -> Result<VertexPositionNormalTexture, String> {
+    match parts[0].parse::<usize>() {
+        Ok(vIndex) => match parts[1].parse::<usize>() {
+            Ok(tIndex) => match parts[2].parse::<usize>() {
+                Ok(nIndex) => Ok(VertexPositionNormalTexture {
+                    position: vertices[vIndex - 1],
+                    normal: normals[nIndex - 1],
+                    texture: textures[tIndex - 1],
+                }),
+                Err(_) => Err("Error parsing vertex texture normal".to_owned()),
+            },
+            Err(_) => Err("Error parsing vertex texture normal".to_owned()),
+        },
+        Err(_) => Err("Error parsing vertex texture normal".to_owned()),
     }
 }
 
@@ -110,13 +117,16 @@ fn parse_vertex_texture(
     parts: &[&str],
     vertices: &Vec<Vec4>,
     textures: &Vec<Vec3>,
-) -> VertexPositionTexture {
-    let vIndex = parts[0].parse::<usize>().unwrap();
-    let tIndex = parts[1].parse::<usize>().unwrap();
-
-    VertexPositionTexture {
-        position: vertices[vIndex - 1],
-        texture: textures[tIndex - 1],
+) -> Result<VertexPositionTexture, String> {
+    match parts[0].parse::<usize>() {
+        Ok(vIndex) => match parts[1].parse::<usize>() {
+            Ok(tIndex) => Ok(VertexPositionTexture {
+                position: vertices[vIndex - 1],
+                texture: textures[tIndex - 1],
+            }),
+            Err(_) => Err("Error parsing vertex texture".to_owned()),
+        },
+        Err(_) => Err("Error parsing vertex texture".to_owned()),
     }
 }
 
@@ -130,32 +140,32 @@ fn parse_face(
 
     for part in parts.iter() {
         let s = String::from(*part);
-        match s.contains("//") {
-            true => vertices.push(Vertex::PositionNormal(parse_vertex_normal(
-                &s, &positions, &normals,
-            ))),
-            false => {
-                let parts = s.split("/").collect::<Vec<&str>>();
-                match parts.len() {
-                    2 => vertices.push(Vertex::PositionTexture(parse_vertex_texture(
-                        &parts, &positions, &textures,
-                    ))),
-                    _ => vertices.push(Vertex::PositionNormalTexture(parse_vertex_texture_normal(
-                        &parts, &positions, &textures, &normals,
-                    ))),
-                };
+
+        if s.contains("//") {
+            match parse_vertex_normal(&s, &positions, &normals) {
+                Ok(vertex_normal) => vertices.push(Vertex::PositionNormal(vertex_normal)),
+                Err(e) => return Err(MeshLoadError::ParseError(String::from(e))),
+            };
+        } else {
+            let parts = s.split("/").collect::<Vec<&str>>();
+            match parts.len() {
+                2 => match parse_vertex_texture(&parts, &positions, &textures) {
+                    Ok(vertex_texture) => vertices.push(Vertex::PositionTexture(vertex_texture)),
+                    Err(e) => return Err(MeshLoadError::ParseError(String::from(e)))
+                },
+                _ => match parse_vertex_texture_normal(&parts, &positions, &textures, &normals) {
+                    Ok(vertex_texture_normal) => vertices.push(Vertex::PositionNormalTexture(vertex_texture_normal)),
+                    Err(e) => return Err(MeshLoadError::ParseError(String::from(e)))
+                }
             }
-        };
+        }
     }
 
     Ok(vertices)
 }
 
 impl Meshes {
-    pub fn load<B>(reader: &mut B) -> MeshLoadResult
-    where
-        B: BufRead,
-    {
+    pub fn load(file: &str) -> MeshLoadResult {
         use std::time::SystemTime;
         let now = SystemTime::now();
 
@@ -166,6 +176,9 @@ impl Meshes {
         let mut vertex_normals: Vec<Vec3> = Vec::new();
         let mut vertex_textures: Vec<[f32; 3]> = Vec::new();
         let mut vertices: Vec<Vec4> = Vec::new();
+
+        let file = File::open(&file).expect("file not found");
+        let mut reader = BufReader::new(&file);
 
         for line in reader.lines() {
             let parts = match line {
