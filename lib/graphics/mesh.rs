@@ -32,21 +32,21 @@ impl Mesh {
 
 #[derive(Debug, Clone)]
 pub struct VertexPositionNormalTexture {
-    position: [f32; 4],
-    normal: [f32; 3],
-    texture: [f32; 3],
+    position: Vec4,
+    normal: Vec3,
+    texture: Vec3,
 }
 
 #[derive(Debug, Clone)]
 pub struct VertexPositionTexture {
-    position: [f32; 4],
-    texture: [f32; 3],
+    position: Vec4,
+    texture: Vec3,
 }
 
 #[derive(Debug, Clone)]
 pub struct VertexPositionNormal {
-    position: [f32; 4],
-    normal: [f32; 3],
+    position: Vec4,
+    normal: Vec3,
 }
 
 #[derive(Debug, Clone)]
@@ -97,8 +97,8 @@ fn parse_float3(parts: &[&str], default: f32) -> ParseFloatResult<Vec3> {
 
 fn parse_vertex_normal(
     s: &String,
-    vertices: &Vec<[f32; 4]>,
-    normals: &Vec<[f32; 3]>,
+    vertices: &Vec<Vec4>,
+    normals: &Vec<Vec3>,
 ) -> Result<VertexPositionNormal, String> {
     let parts = s.split("//").collect::<Vec<&str>>();
 
@@ -196,7 +196,7 @@ impl Meshes {
         let mut current_material: String = "unknown material".to_owned();
         let mut faces: Vec<Vertex> = Vec::new();
         let mut vertex_normals: Vec<Vec3> = Vec::new();
-        let mut vertex_textures: Vec<[f32; 3]> = Vec::new();
+        let mut vertex_textures: Vec<Vec3> = Vec::new();
         let mut vertices: Vec<Vec4> = Vec::new();
         let mut meshes: Vec<Mesh> = Vec::new();
 

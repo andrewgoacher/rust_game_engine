@@ -3,10 +3,10 @@ use rust_game_engine::game::Engine;
 use rust_game_engine::game::Game;
 use rust_game_engine::graphics::shapes::{create_billboard, Vertex};
 use rust_game_engine::graphics::{create_shader, load_texture, TextureConvert};
-use rust_game_engine::math::matrix::Matrix;
+use rust_game_engine::math::matrix::{Mat4x4, Matrix};
 use rust_game_engine::math::FOV;
 
-use rust_game_engine::graphics::mesh::{Meshes,MeshLoadError};
+use rust_game_engine::graphics::mesh::{MeshLoadError, Meshes};
 
 #[macro_use]
 extern crate glium;
@@ -16,8 +16,8 @@ struct DemoGame {
     diffuse_texture: glium::texture::SrgbTexture2d,
     normal_map: glium::texture::Texture2d,
     program: glium::Program,
-    model: Matrix,
-    view: Matrix,
+    model: Mat4x4,
+    view: Mat4x4,
 }
 
 impl DemoGame {
@@ -32,8 +32,8 @@ impl DemoGame {
                 "./content/fragment_shader.glsl",
                 &engine,
             ),
-            model: Matrix::identity(),
-            view: Matrix::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]),
+            model: Mat4x4::identity(),
+            view: Mat4x4::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]),
         }
     }
 }
@@ -42,8 +42,8 @@ impl Game for DemoGame {
     fn on_frame(self, frame: &mut glium::Frame, engine: &Engine) -> DemoGame {
         use glium::Surface;
 
-        let perspective: Matrix =
-            Matrix::perspective(frame.get_dimensions(), FOV, (0.1f32, 1024.0f32));
+        let perspective: Mat4x4 =
+            Mat4x4::perspective(frame.get_dimensions(), FOV, (0.1f32, 1024.0f32));
 
         let light = [1.4, 0.4, 0.7f32];
 
@@ -74,29 +74,24 @@ impl Game for DemoGame {
 
 fn main() {
     use std::fs::File;
-    use std::io::{BufRead,BufReader};
+    use std::io::{BufRead, BufReader};
     // let mut events_loop = glium::glutin::EventsLoop::new();
     // let engine = Engine::new(&events_loop);
     // let game = DemoGame::new(&engine);
 
     // engine.run(&mut events_loop, game);
-    // let o = match  ObjectFile::parse("./content/Millenium Falcon/millenium-falcon.obj") {
-    //     Some(s) => s,
-    //     None => panic!("No object file")
-    // };
 
     let mesh = match Meshes::load("./content/Millenium Falcon/millenium-falcon.obj") {
         Ok(m) => m,
         Err(e) => match e {
             MeshLoadError::UnknownTokenError(err) => panic!("Unknown token: {}", err),
             MeshLoadError::ParseError(err) => panic!("Parsing error: {}", err),
-            _ => panic!("Unresolved mesh load error")
-        }
+            _ => panic!("Unresolved mesh load error"),
+        },
     };
 
-
-  //  println!("{:?}", o);
-  mesh.print();
+    //    println!("{:?}", o);
+    mesh.print();
 
     ()
 }

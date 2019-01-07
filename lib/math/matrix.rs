@@ -1,21 +1,22 @@
-pub struct Matrix {
-    m1: [f32; 4],
-    m2: [f32; 4],
-    m3: [f32; 4],
-    m4: [f32; 4],
+use super::{Vec3, Vec4};
+
+pub type Mat4x4 = [f32; 16];
+
+pub trait Matrix {
+    fn identity() -> Self;
+    fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Self;
+    fn view(position: &Vec3, direction: &Vec3, up: &Vec3) -> Self;
+    fn to_array(&self) -> [Vec4;4];
 }
 
-impl Matrix {
-    pub fn identity() -> Matrix {
-        Matrix {
-            m1: [1.0, 0.0, 0.0, 0.0],
-            m2: [0.0, 1.0, 0.0, 0.0],
-            m3: [0.0, 0.0, 1.0, 0.0],
-            m4: [0.0, 0.0, 0.0, 1.0],
-        }
+impl Matrix for Mat4x4 {
+    fn identity() -> Mat4x4 {
+        [
+            1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+        ]
     }
 
-    pub fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Matrix {
+    fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Mat4x4 {
         let (width, height) = dimensions;
         let aspect_ratio = height as f32 / width as f32;
 
@@ -23,15 +24,27 @@ impl Matrix {
 
         let f = 1.0 / (fov / 2.0).tan();
 
-        Matrix {
-            m1: [f * aspect_ratio, 0.0, 0.0, 0.0],
-            m2: [0.0, f, 0.0, 0.0],
-            m3: [0.0, 0.0, (far + near) / (far - near), 1.0],
-            m4: [0.0, 0.0, -(2.0 * far * near) / (far - near), 0.0],
-        }
+        [
+            f * aspect_ratio,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            f,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            (far + near) / (far - near),
+            1.0,
+            0.0,
+            0.0,
+            -(2.0 * far * near) / (far - near),
+            0.0,
+        ]
     }
 
-    pub fn view(position: &[f32; 3], direction: &[f32; 3], up: &[f32; 3]) -> Matrix {
+    fn view(position: &Vec3, direction: &Vec3, up: &Vec3) -> Mat4x4 {
         let f = {
             let f = direction;
             let len = f[0] * f[0] + f[1] * f[1] + f[2] * f[2];
@@ -63,15 +76,18 @@ impl Matrix {
             -position[0] * f[0] - position[1] * f[1] - position[2] * f[2],
         ];
 
-        Matrix {
-            m1: [s_norm[0], u[0], f[0], 0.0],
-            m2: [s_norm[1], u[1], f[1], 0.0],
-            m3: [s_norm[2], u[2], f[2], 0.0],
-            m4: [p[0], p[1], p[2], 1.0],
-        }
+        [
+            s_norm[0], u[0], f[0], 0.0, s_norm[1], u[1], f[1], 0.0, s_norm[2], u[2], f[2], 0.0,
+            p[0], p[1], p[2], 1.0,
+        ]
     }
 
-    pub fn to_array(&self) -> [[f32; 4]; 4] {
-        [self.m1, self.m2, self.m3, self.m4]
+    fn to_array(&self) -> [Vec4;4] {
+        [
+            [self[0],self[1],self[2],self[3]],
+            [self[4],self[5],self[6],self[7]],
+            [self[8],self[9],self[10],self[11]],
+            [self[12],self[13],self[14],self[15]]
+        ]
     }
 }
