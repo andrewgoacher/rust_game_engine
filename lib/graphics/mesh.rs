@@ -17,6 +17,10 @@ pub struct Mesh {
     material: String,
 }
 
+pub trait Printable {
+    fn print(&self) -> ();
+}
+
 impl Mesh {
     fn new(name: String, material: String, vertices: Vec<Vertex>) -> Mesh {
         Mesh {
@@ -25,11 +29,64 @@ impl Mesh {
             vertices: vertices,
         }
     }
+}
 
+impl Printable for Mesh {
     fn print(&self) -> () {
         println!("\t\tMesh: {}", self.name);
         println!("\t\t\tmaterial: {}", self.material);
         println!("\t\t\tNum vertices: {}", self.vertices.len());
+    }
+}
+
+impl Printable for Meshes {
+    fn print(&self) -> () {
+        println!("Total materials: {}", self.materials.len());
+
+        for (k, m) in self.materials.iter() {
+            m.print();
+        }
+
+        println!("Total meshes: {}", self.meshes.len());
+        for mesh in self.meshes.iter() {
+            mesh.print();
+        }
+    }
+}
+
+impl Printable for Material {
+    fn print(&self) -> () {
+        println!("\t\tMaterial: {}", self.name);
+        println!("\t\t\tNi: {}", self.ni);
+        println!("\t\t\tNs: {}", self.ns);
+        println!("\t\t\td: {}", self.d);
+        println!("\t\t\tTr: {}", self.tr);
+        print!("\t\t\ttf: ");
+        self.tf.print();
+        println!("\t\t\tillum: {:?}", self.illum);
+        print!("\t\t\tka: ");
+        self.ka.print();
+        print!("\t\t\tkd: ");
+        self.kd.print();
+        print!("\t\t\tks: ");
+        self.ks.print();
+        print!("\t\t\tke: ");
+        self.ke.print();
+
+        match self.map_ka.clone() {
+            None => (),
+            Some(m) => println!("\t\t\tmap_ka: {}", m)
+        };
+
+        match self.map_kd.clone() {
+            None => (),
+            Some(m) => println!("\t\t\tmap_kd: {}", m)
+        };
+
+        match self.map_refl.clone() {
+            None => (),
+            Some(m) => println!("\t\t\tmap_refl: {}", m)
+        };
     }
 }
 
@@ -250,6 +307,20 @@ pub enum MaterialColor {
     RGB(f32, f32, f32),
     CIEXYZ(f32, f32, f32),
     Spectral(String, Option<f32>),
+}
+
+impl Printable for MaterialColor {
+    fn print(&self) -> () {
+        match self {
+            MaterialColor::None => (),
+            MaterialColor::RGB(r,g,b) => println!("(r,g,b): ({},{},{})",r,g,b),
+            MaterialColor::CIEXYZ(x,y,z) =>  println!("(x,y,z): ({},{},{})",x,y,z),
+            MaterialColor::Spectral(file, factor) => match factor {
+                None => println!("spectral: {}", file),
+                Some(f) => println!("(spectral,factor): ({}, {})", file, f)
+            }
+        }
+    }
 }
 
 fn parse_color(parts: &[&str]) -> MaterialColor {
@@ -554,6 +625,7 @@ impl Meshes {
         let mut vertex_textures: Vec<Vec3> = Vec::new();
         let mut vertices: Vec<Vec4> = Vec::new();
         let mut meshes: Vec<Mesh> = Vec::new();
+        let mut group_name: String = "".to_owned();
 
         let directory = Path::new(&file)
             .parent()
@@ -613,8 +685,8 @@ impl Meshes {
                     };
                 }
                 "g" => {
-                    let group_name = String::from(rest[0]);
                     if faces.len() == 0 {
+                        group_name = String::from(rest[0]);
                         continue;
                     }
 
@@ -623,6 +695,7 @@ impl Meshes {
                         current_material.clone(),
                         faces.clone(),
                     ));
+                    group_name = String::from(rest[0]);
                     faces.clear();
                 }
                 "usemtl" => current_material = String::from(rest[0]),
@@ -639,6 +712,12 @@ impl Meshes {
             }
         }
 
+        meshes.push(Mesh::new(
+            group_name,
+            current_material.clone(),
+            faces.clone(),
+        ));
+
         match now.elapsed() {
             Ok(elapsed) => {
                 println!("Time taken to parse: {} seconds", elapsed.as_secs());
@@ -652,18 +731,5 @@ impl Meshes {
             meshes: meshes,
             materials: materials,
         })
-    }
-
-    pub fn print(&self) -> () {
-        println!("Total materials: {}", self.materials.len());
-
-        for (k, m) in self.materials.iter() {
-            println!("\tName: {}", m.name.clone());
-        }
-
-        println!("Total meshes: {}", self.meshes.len());
-        for mesh in self.meshes.iter() {
-            mesh.print();
-        }
     }
 }

@@ -6,7 +6,7 @@ use rust_game_engine::graphics::{create_shader, load_texture, TextureConvert};
 use rust_game_engine::math::matrix::{Mat4x4, Matrix};
 use rust_game_engine::math::FOV;
 
-use rust_game_engine::graphics::mesh::{MeshLoadError, Meshes};
+use rust_game_engine::graphics::mesh::{MeshLoadError, Meshes,Printable};
 
 #[macro_use]
 extern crate glium;
