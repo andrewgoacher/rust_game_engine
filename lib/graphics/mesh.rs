@@ -103,10 +103,10 @@ fn parse_vertex_normal(
     let parts = s.split("//").collect::<Vec<&str>>();
 
     match parts[0].parse::<usize>() {
-        Ok(vIndex) => match parts[1].parse::<usize>() {
-            Ok(nIndex) => Ok(VertexPositionNormal {
-                position: vertices[vIndex - 1],
-                normal: normals[nIndex - 1],
+        Ok(v_index) => match parts[1].parse::<usize>() {
+            Ok(n_index) => Ok(VertexPositionNormal {
+                position: vertices[v_index - 1],
+                normal: normals[n_index - 1],
             }),
             Err(_) => Err("Error parsing vertex normal".to_owned()),
         },
@@ -121,12 +121,12 @@ fn parse_vertex_texture_normal(
     normals: &Vec<Vec3>,
 ) -> Result<VertexPositionNormalTexture, String> {
     match parts[0].parse::<usize>() {
-        Ok(vIndex) => match parts[1].parse::<usize>() {
-            Ok(tIndex) => match parts[2].parse::<usize>() {
-                Ok(nIndex) => Ok(VertexPositionNormalTexture {
-                    position: vertices[vIndex - 1],
-                    normal: normals[nIndex - 1],
-                    texture: textures[tIndex - 1],
+        Ok(v_index) => match parts[1].parse::<usize>() {
+            Ok(t_index) => match parts[2].parse::<usize>() {
+                Ok(n_index) => Ok(VertexPositionNormalTexture {
+                    position: vertices[v_index - 1],
+                    normal: normals[n_index - 1],
+                    texture: textures[t_index - 1],
                 }),
                 Err(_) => Err("Error parsing vertex texture normal".to_owned()),
             },
@@ -142,10 +142,10 @@ fn parse_vertex_texture(
     textures: &Vec<Vec3>,
 ) -> Result<VertexPositionTexture, String> {
     match parts[0].parse::<usize>() {
-        Ok(vIndex) => match parts[1].parse::<usize>() {
-            Ok(tIndex) => Ok(VertexPositionTexture {
-                position: vertices[vIndex - 1],
-                texture: textures[tIndex - 1],
+        Ok(v_index) => match parts[1].parse::<usize>() {
+            Ok(t_index) => Ok(VertexPositionTexture {
+                position: vertices[v_index - 1],
+                texture: textures[t_index - 1],
             }),
             Err(_) => Err("Error parsing vertex texture".to_owned()),
         },
