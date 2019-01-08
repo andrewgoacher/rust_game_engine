@@ -1,13 +1,4 @@
-use super::{Vec3, Vec4};
-
-pub type Mat4x4 = [f32; 16];
-
-pub trait Matrix {
-    fn identity() -> Self;
-    fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Self;
-    fn view(position: &Vec3, direction: &Vec3, up: &Vec3) -> Self;
-    fn to_array(&self) -> [Vec4;4];
-}
+use math::{Mat4x4,Matrix,Vec3,Vec4};
 
 impl Matrix for Mat4x4 {
     fn identity() -> Mat4x4 {
