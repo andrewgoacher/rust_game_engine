@@ -7,20 +7,20 @@ use std::path::Path;
 
 #[derive(Clone, Debug)]
 pub struct Material {
-    name: String,
-    ns: f32,
-    ni: f32,
-    d: f32,
-    tr: f32,
-    tf: MaterialColor,
-    illum: IlluminationModel,
-    ka: MaterialColor,
-    kd: MaterialColor,
-    ks: MaterialColor,
-    ke: MaterialColor,
-    map_ka: Option<String>,
-    map_kd: Option<String>,
-    map_refl: Option<String>,
+    pub name: String,
+    pub ns: f32,
+    pub ni: f32,
+    pub d: f32,
+    pub tr: f32,
+    pub tf: MaterialColor,
+    pub illum: IlluminationModel,
+    pub ka: MaterialColor,
+    pub kd: MaterialColor,
+    pub ks: MaterialColor,
+    pub ke: MaterialColor,
+    pub map_ka: Option<String>,
+    pub map_kd: Option<String>,
+    pub map_refl: Option<String>,
 }
 
 impl Material {
@@ -30,7 +30,7 @@ impl Material {
 }
 
 impl Parseable for Material {
-    type ParseResult = Result<Vec<Material>,ParseError>;
+    type ParseResult = Result<Vec<Material>, ParseError>;
 
     fn from_file(file: &str) -> Self::ParseResult {
         let directory = Path::new(&file)

@@ -110,6 +110,14 @@ fn main() {
 
     println!("mesh \n{}", mesh);
 
+    for (_,mat) in mesh.materials.iter() {
+        println!("\t\t{}", mat);
+    }
+
+    for mesh in mesh.meshes.iter() {
+        println!("\t\t{}", mesh)
+    }
+
     // //    println!("{:?}", o);
     // mesh.print();
 

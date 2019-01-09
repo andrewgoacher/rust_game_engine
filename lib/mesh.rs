@@ -10,9 +10,9 @@ use vertex::{Vertex, VertexPositionNormal, VertexPositionNormalTexture, VertexPo
 
 #[derive(Clone)]
 pub struct MeshDescription {
-    vertices: Vec<Vertex>,
-    name: String,
-    material: String,
+    pub vertices: Vec<Vertex>,
+    pub name: String,
+    pub material: String,
 }
 
 impl fmt::Display for MeshDescription {
@@ -25,8 +25,8 @@ impl fmt::Display for MeshDescription {
 
 #[derive(Clone)]
 pub struct MeshDescriptions {
-    materials: HashMap<String, Material>,
-    meshes: Vec<MeshDescription>,
+    pub materials: HashMap<String, Material>,
+    pub meshes: Vec<MeshDescription>,
 }
 
 impl fmt::Display for MeshDescriptions {
