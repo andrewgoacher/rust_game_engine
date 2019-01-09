@@ -16,7 +16,9 @@ use rust_game_engine:: {
 use sandbox::run_sandbox;
 
 fn main() {
-    let matches = App::new("Rust Game Engine")
+    const TITLE: &str = "Rust Game Engine";
+
+    let matches = App::new(TITLE)
         .arg(
             Arg::with_name("scene")
                 .short("s")
@@ -25,14 +27,14 @@ fn main() {
         ).get_matches();
     
     match matches.value_of("scene") {
-        None => run_scene("sandbox"),
-        Some(s) => run_scene(s)
+        None => run_scene("sandbox", TITLE),
+        Some(s) => run_scene(s, TITLE)
     }
 }
 
-fn run_scene(scene: &str) {
+fn run_scene(scene: &str, title: &str) {
     match &scene.to_lowercase()[..] {
-        "sandbox" => run_sandbox(),
+        "sandbox" => run_sandbox(title),
         "falcon" => load_mesh_scene("./content/Millenium Falcon/millenium-falcon.obj", "Millenium Falcon"),
         "earth" => load_mesh_scene("./content/Earth/earth.obj", "Earth"),
         "ironman" => load_mesh_scene("./content/IronMan/IronMan.obj", "IronMan"),

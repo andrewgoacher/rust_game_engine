@@ -1,21 +1,21 @@
-use glium;
 use glium::Program;
 
-use std::ffi::OsStr;
-use std::path::Path;
-use std::fs::{File,read_to_string};
+use std::{
+    ffi::OsStr,
+    fs::{File, read_to_string},
+    path::Path
+};
 
-use game::Engine;
 use io::to_cursor;
 
-pub fn create_shader(vertex: &str, fragment: &str, engine: &Engine) -> Program {
+pub fn create_shader(vertex: &str, fragment: &str, display: &glium::Display) -> Program {
     let vertex_shader_src =
         read_to_string(&vertex).expect(format!("Failed to find {}", &vertex).as_str());
     let fragment_shader_src =
         read_to_string(&fragment).expect(format!("Failed to find {}", &fragment).as_str());
 
     glium::Program::from_source(
-        engine.get_display(),
+        display,
         &vertex_shader_src[..],
         &fragment_shader_src[..],
         None,
@@ -50,16 +50,16 @@ pub fn load_texture<'a>(path: &str) -> glium::texture::RawImage2d<'a, u8> {
 }
 
 pub trait TextureConvert {
-    fn as_texture_2d(self, engine: &Engine) -> glium::texture::Texture2d;
-    fn as_srgb_texture_2d(self, engine: &Engine) -> glium::texture::SrgbTexture2d;
+    fn as_texture_2d(self, display: &glium::Display) -> glium::texture::Texture2d;
+    fn as_srgb_texture_2d(self, display: &glium::Display) -> glium::texture::SrgbTexture2d;
 }
 
 impl<'a> TextureConvert for glium::texture::RawImage2d<'a, u8> {
-    fn as_texture_2d(self, engine: &Engine) -> glium::texture::Texture2d {
-        glium::texture::Texture2d::new(engine.get_display(), self).unwrap()
+    fn as_texture_2d(self, display: &glium::Display) -> glium::texture::Texture2d {
+        glium::texture::Texture2d::new(display, self).unwrap()
     }
 
-    fn as_srgb_texture_2d(self, engine: &Engine) -> glium::texture::SrgbTexture2d {
-        glium::texture::SrgbTexture2d::new(engine.get_display(), self).unwrap()
+    fn as_srgb_texture_2d(self, display: &glium::Display) -> glium::texture::SrgbTexture2d {
+        glium::texture::SrgbTexture2d::new(display, self).unwrap()
     }
 }

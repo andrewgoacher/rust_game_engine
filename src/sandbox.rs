@@ -6,11 +6,12 @@ use glium::{
 };
 
 use rust_game_engine::{
-    game::{Engine, Game},
+    game::{Game},
     math::{Mat4x4, Matrix, FOV},
     shapes::{create_billboard, Vertex},
     vector::Vec3,
-    graphics::{create_shader,load_texture, TextureConvert}
+    graphics::{create_shader,load_texture, TextureConvert},
+    engine::{create_engine,run}
 };
 
 struct DemoGame {
@@ -23,7 +24,7 @@ struct DemoGame {
 }
 
 impl Game for DemoGame {
-    fn on_frame(self, frame: &mut Frame, _engine: &Engine) -> DemoGame {
+    fn on_frame(self, frame: &mut Frame) -> DemoGame {
         use glium::Surface;
 
         let perspective: Mat4x4 =
@@ -56,15 +57,15 @@ impl Game for DemoGame {
     }
 }
 
-fn create_demo_game(engine: &Engine) -> DemoGame {
+fn create_demo_game(display: &glium::Display) -> DemoGame {
     DemoGame {
-        shape: create_billboard(&engine),
-        diffuse_texture: load_texture("./content/tuto-14-diffuse.jpg").as_srgb_texture_2d(&engine),
-        normal_map: load_texture("./content/tuto-14-normal.png").as_texture_2d(&engine),
+        shape: create_billboard(&display),
+        diffuse_texture: load_texture("./content/tuto-14-diffuse.jpg").as_srgb_texture_2d(&display),
+        normal_map: load_texture("./content/tuto-14-normal.png").as_texture_2d(&display),
         program: create_shader(
             "./content/vertex_shader.glsl",
             "./content/fragment_shader.glsl",
-            &engine,
+            &display,
         ),
         model: Mat4x4::identity(),
         view: Mat4x4::view(
@@ -87,10 +88,10 @@ fn create_demo_game(engine: &Engine) -> DemoGame {
     }
 }
 
-pub fn run_sandbox() {
+pub fn run_sandbox(title: &str) {
     let mut events_loop = glium::glutin::EventsLoop::new();
-    let engine = Engine::new(&events_loop);
-    let game = create_demo_game(&engine);
-
-    engine.run(&mut events_loop, game);
+    let display = create_engine(&events_loop, title);
+    let game = create_demo_game(&display);
+    
+    run(&display, &mut events_loop, game);
 }
