@@ -9,3 +9,12 @@ pub mod io;
 pub mod math;
 pub mod matrix;
 pub mod vector;
+pub mod vertex;
+pub mod parser;
+pub mod material;
+pub mod shapes;
+pub mod mesh;
+
+pub trait Printable {
+    fn print(&self);
+}

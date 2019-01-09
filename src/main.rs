@@ -1,12 +1,14 @@
 extern crate rust_game_engine;
 use rust_game_engine::game::Engine;
 use rust_game_engine::game::Game;
-use rust_game_engine::graphics::shapes::{create_billboard, Vertex};
 use rust_game_engine::graphics::{create_shader, load_texture, TextureConvert};
-use rust_game_engine::math::{Mat4x4, Matrix};
 use rust_game_engine::math::FOV;
+use rust_game_engine::math::{Mat4x4, Matrix};
+use rust_game_engine::shapes::{create_billboard, Vertex};
+use rust_game_engine::vector::{Vec3, Vec4, Vector};
 
-use rust_game_engine::graphics::mesh::{MeshLoadError, Meshes,Printable};
+use rust_game_engine::mesh::MeshDescriptions;
+use rust_game_engine::parser::{Parseable,ParseError};
 
 #[macro_use]
 extern crate glium;
@@ -33,7 +35,23 @@ impl DemoGame {
                 &engine,
             ),
             model: Mat4x4::identity(),
-            view: Mat4x4::view(&[0.5, 0.2, -3.0], &[-0.5, -0.2, 3.0], &[0.0, 1.0, 0.0]),
+            view: Mat4x4::view(
+                &Vec3 {
+                    x: 0.5f32,
+                    y: 0.2f32,
+                    z: -3.0f32,
+                },
+                &Vec3 {
+                    x: -0.5f32,
+                    y: -0.2f32,
+                    z: 3.0f32,
+                },
+                &Vec3 {
+                    x: 0.0f32,
+                    y: 1.0f32,
+                    z: 0.0f32,
+                },
+            ),
         }
     }
 }
@@ -81,17 +99,19 @@ fn main() {
 
     // engine.run(&mut events_loop, game);
 
-    let mesh = match Meshes::load("./content/Millenium Falcon/millenium-falcon.obj") {
+    let mesh = match MeshDescriptions::from_file("./content/Millenium Falcon/millenium-falcon.obj") {
         Ok(m) => m,
         Err(e) => match e {
-            MeshLoadError::UnknownTokenError(err) => panic!("Unknown token: {}", err),
-            MeshLoadError::ParseError(err) => panic!("Parsing error: {}", err),
+            ParseError::UnknownToken(err) => panic!("Unknown token: {}", err),
+            ParseError::GeneralError(err) => panic!("Parsing error: {}", err),
             _ => panic!("Unresolved mesh load error"),
         },
     };
 
-    //    println!("{:?}", o);
-    mesh.print();
+    println!("mesh \n{}", mesh);
+
+    // //    println!("{:?}", o);
+    // mesh.print();
 
     ()
 }

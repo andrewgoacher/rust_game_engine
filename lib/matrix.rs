@@ -1,4 +1,5 @@
-use math::{Mat4x4,Matrix,Vec3,Vec4};
+use math::{Mat4x4,Matrix};
+use vector::{Vec3,Vec4};
 
 impl Matrix for Mat4x4 {
     fn identity() -> Mat4x4 {
@@ -73,7 +74,7 @@ impl Matrix for Mat4x4 {
         ]
     }
 
-    fn to_array(&self) -> [Vec4;4] {
+    fn to_array(&self) -> [[f32;4];4] {
         [
             [self[0],self[1],self[2],self[3]],
             [self[4],self[5],self[6],self[7]],
