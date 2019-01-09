@@ -21,6 +21,9 @@ pub struct Material {
     pub map_ka: Option<String>,
     pub map_kd: Option<String>,
     pub map_refl: Option<String>,
+    pub map_ke: Option<String>,
+    pub map_bump: Option<String>,
+    pub map_d: Option<String>,
 }
 
 impl Material {
@@ -56,6 +59,9 @@ impl Parseable for Material {
         let mut map_ka: Option<String> = None;
         let mut map_kd: Option<String> = None;
         let mut map_refl: Option<String> = None;
+        let mut map_ke: Option<String> = None;
+        let mut map_bump: Option<String> = None;
+        let mut map_d: Option<String> = None;
 
         for line in reader.lines() {
             let parts = match line {
@@ -98,6 +104,18 @@ impl Parseable for Material {
                                 None => None,
                                 Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
                             },
+                             map_ke: match map_ke.clone() {
+                                None => None,
+                                Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
+                            },
+                               map_bump: match map_bump.clone() {
+                                None => None,
+                                Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
+                            },
+                             map_d: match map_d.clone() {
+                                None => None,
+                                Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
+                            },
                         });
                         specular_exponent = 0f32;
                         optical_density = 0f32;
@@ -112,6 +130,9 @@ impl Parseable for Material {
                         map_ka = None;
                         map_kd = None;
                         map_refl = None;
+                        map_ke = None;
+                        map_bump = None;
+                        map_d = None;
                     }
                 }
                 material_name = Some(String::from(rest[0]));
@@ -234,6 +255,9 @@ impl Parseable for Material {
             "map_Ka" => map_ka = Some(String::from(rest[0])),
             "map_Kd" => map_kd = Some(String::from(rest[0])),
             "map_refl" => map_refl = Some(String::from(rest[0])),
+            "map_Ke" => map_ke = Some(String::from(rest[0])),
+            "map_d" => map_d = Some(String::from(rest[0])),
+            "map_bump" | "bump" => map_ke = Some(String::from(rest[0])),
             "#" => continue,
             x => {
                 return Err(ParseError::UnknownToken(
@@ -267,6 +291,18 @@ impl Parseable for Material {
                         Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
                     },
                     map_refl: match map_refl.clone() {
+                        None => None,
+                        Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
+                    },
+                    map_ke: match map_ke.clone() {
+                        None => None,
+                        Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
+                    },
+                    map_bump: match map_bump.clone() {
+                        None => None,
+                        Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
+                    },
+                    map_d: match map_d.clone() {
                         None => None,
                         Some(m) => Some(format!("{}/{}", &directory, m).to_owned()),
                     },
@@ -339,6 +375,21 @@ impl fmt::Display for Material {
         match self.map_kd.clone() {
             None => Ok(()),
             Some(m) => writeln!(f, "\tmap_kd: {}", m),
+        };
+
+        match self.map_ke.clone() {
+            None => Ok(()),
+            Some(m) => writeln!(f, "\tmap_ke: {}", m),
+        };
+
+        match self.map_bump.clone() {
+            None => Ok(()),
+            Some(m) => writeln!(f, "\tmap_bump: {}", m),
+        };
+
+        match self.map_d.clone() {
+            None => Ok(()),
+            Some(m) => writeln!(f, "\tmap_d: {}", m),
         };
 
         match self.map_refl.clone() {

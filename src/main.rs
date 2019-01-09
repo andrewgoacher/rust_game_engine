@@ -99,7 +99,16 @@ fn main() {
 
     // engine.run(&mut events_loop, game);
 
-    let mesh = match MeshDescriptions::from_file("./content/Millenium Falcon/millenium-falcon.obj") {
+    // let mesh = match MeshDescriptions::from_file("./content/Millenium Falcon/millenium-falcon.obj") {
+    //     Ok(m) => m,
+    //     Err(e) => match e {
+    //         ParseError::UnknownToken(err) => panic!("Unknown token: {}", err),
+    //         ParseError::GeneralError(err) => panic!("Parsing error: {}", err),
+    //         _ => panic!("Unresolved mesh load error"),
+    //     },
+    // };
+
+     let mesh = match MeshDescriptions::from_file("./content/Earth/earth.obj") {
         Ok(m) => m,
         Err(e) => match e {
             ParseError::UnknownToken(err) => panic!("Unknown token: {}", err),
@@ -107,6 +116,15 @@ fn main() {
             _ => panic!("Unresolved mesh load error"),
         },
     };
+
+    //  let mesh = match MeshDescriptions::from_file("./content/IronMan/IronMan.obj") {
+    //     Ok(m) => m,
+    //     Err(e) => match e {
+    //         ParseError::UnknownToken(err) => panic!("Unknown token: {}", err),
+    //         ParseError::GeneralError(err) => panic!("Parsing error: {}", err),
+    //         _ => panic!("Unresolved mesh load error"),
+    //     },
+    // };
 
     println!("mesh \n{}", mesh);
 
