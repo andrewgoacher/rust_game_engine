@@ -1,12 +1,12 @@
-use material::Material;
-use parser::{ParseError, Parseable};
+use graphics::Material;
+use parser::{ParseError, FromFile};
 use std::collections::HashMap;
 use std::fmt;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
-use vector::{Vec3, Vec4};
-use vertex::{Vertex, VertexPositionNormal, VertexPositionNormalTexture, VertexPositionTexture};
+use math::{Vec3, Vec4, Vector};
+use graphics::{Vertex, VertexPositionNormal, VertexPositionNormalTexture, VertexPositionTexture};
 
 #[derive(Clone)]
 pub struct MeshDescription {
@@ -59,7 +59,7 @@ impl MeshDescriptions {
     }
 }
 
-impl Parseable for MeshDescriptions {
+impl FromFile for MeshDescriptions {
     type ParseResult = Result<MeshDescriptions, ParseError>;
 
     fn from_file(file: &str) -> Self::ParseResult {
@@ -108,19 +108,19 @@ impl Parseable for MeshDescriptions {
                     };
                 }
                 "v" => {
-                    match rest.parse::<Vec4>() {
+                    match Vec4::from_str(rest) {
                         Ok(arr) => vertices.push(arr),
                         Err(e) => return Err(ParseError::GeneralError(e)),
                     };
                 }
                 "vn" => {
-                    match rest.parse::<Vec3>() {
+                    match Vec3::from_str(rest) {
                         Ok(arr) => vertex_normals.push(arr),
                         Err(e) => return Err(ParseError::GeneralError(e)),
                     };
                 }
                 "vt" => {
-                    match rest.parse::<Vec3>() {
+                    match Vec3::from_str(rest) {
                         Ok(arr) => vertex_textures.push(arr),
                         Err(e) => return Err(ParseError::GeneralError(e)),
                     };

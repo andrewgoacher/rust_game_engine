@@ -1,4 +1,4 @@
-use parser::{ParseError, Parseable};
+use parser::{ParseError, FromFile};
 use std::collections::HashMap;
 use std::fmt;
 use std::fs::File;
@@ -32,7 +32,7 @@ impl Material {
     }
 }
 
-impl Parseable for Material {
+impl FromFile for Material {
     type ParseResult = Result<Vec<Material>, ParseError>;
 
     fn from_file(file: &str) -> Self::ParseResult {

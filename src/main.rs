@@ -9,8 +9,8 @@ mod sandbox;
 use clap::{App, Arg};
 
 use rust_game_engine:: {
-    mesh::MeshDescriptions,
-    parser::{Parseable,ParseError}
+    graphics::MeshDescriptions,
+    parser::{FromFile,ParseError}
 };
 
 use sandbox::run_sandbox;

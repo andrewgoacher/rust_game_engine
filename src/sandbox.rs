@@ -7,15 +7,13 @@ use glium::{
 
 use rust_game_engine::{
     game::{Game},
-    math::{Mat4x4, Matrix, FOV},
-    shapes::{create_billboard, Vertex},
-    vector::Vec3,
-    graphics::{create_shader,load_texture, TextureConvert},
+    math::{Mat4x4, Matrix, FOV, Vec3},
+    graphics::{create_shader,load_texture, TextureConvert, create_billboard, VertexPositionNormalTexture},
     engine::{create_engine,run}
 };
 
 struct DemoGame {
-    shape: VertexBuffer<Vertex>,
+    shape: VertexBuffer<VertexPositionNormalTexture>,
     diffuse_texture: SrgbTexture2d,
     normal_map: Texture2d,
     program: Program,
@@ -69,21 +67,9 @@ fn create_demo_game(display: &glium::Display) -> DemoGame {
         ),
         model: Mat4x4::identity(),
         view: Mat4x4::view(
-            &Vec3 {
-                x: 0.5f32,
-                y: 0.2f32,
-                z: -3.0f32,
-            },
-            &Vec3 {
-                x: -0.5f32,
-                y: -0.2f32,
-                z: 3.0f32,
-            },
-            &Vec3 {
-                x: 0.0f32,
-                y: 1.0f32,
-                z: 0.0f32,
-            },
+            &[0.5, 0.2, -3.0f32],
+            &[-0.5, -0.2, 3.0f32],
+            &[0.0, 1.0, 0.0f32]
         ),
     }
 }

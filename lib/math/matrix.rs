@@ -1,5 +1,13 @@
-use math::{Mat4x4,Matrix};
-use vector::{Vec3,Vec4};
+use math::vector::{Vec3};
+
+pub type Mat4x4 = [f32; 16];
+
+pub trait Matrix {
+    fn identity() -> Self;
+    fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Self;
+    fn view(position: &Vec3, direction: &Vec3, up: &Vec3) -> Self;
+    fn to_array(&self) -> [[f32;4]; 4];
+}
 
 impl Matrix for Mat4x4 {
     fn identity() -> Mat4x4 {

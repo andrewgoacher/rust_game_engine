@@ -1,3 +1,14 @@
+mod material;
+mod mesh;
+mod shapes;
+mod vertex;
+
+pub use self::vertex::*;
+pub use self::mesh::*;
+pub use self::material::*;
+
+pub use self::shapes::{create_billboard};
+
 use glium::Program;
 
 use std::{
@@ -7,6 +18,7 @@ use std::{
 };
 
 use io::to_cursor;
+
 
 pub fn create_shader(vertex: &str, fragment: &str, display: &glium::Display) -> Program {
     let vertex_shader_src =

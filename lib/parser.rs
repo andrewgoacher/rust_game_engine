@@ -3,7 +3,7 @@ pub enum ParseError {
     GeneralError(String)
 }
 
-pub trait Parseable {
+pub trait FromFile {
     type ParseResult;
 
     fn from_file(file: &str) -> Self::ParseResult;
