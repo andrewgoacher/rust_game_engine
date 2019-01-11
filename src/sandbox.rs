@@ -67,9 +67,9 @@ fn create_demo_game(display: &glium::Display) -> DemoGame {
         ),
         model: Mat4x4::identity(),
         view: Mat4x4::view(
-            &[0.5, 0.2, -3.0f32],
-            &[-0.5, -0.2, 3.0f32],
-            &[0.0, 1.0, 0.0f32]
+            &Vec3 { x: 0.5, y: 0.2, z: -3.0f32},
+            &Vec3{x: -0.5, y: -0.2, z: 3.0f32},
+            &Vec3{x: 0.0, y: 1.0, z: 0.0f32}
         ),
     }
 }
