@@ -1,3 +1,6 @@
+#![deny(missing_docs)]
+#![deny(missing_debug_implementations)]
+
 extern crate clap;
 extern crate rust_game_engine;
 
