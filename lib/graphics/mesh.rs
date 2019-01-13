@@ -79,7 +79,7 @@ impl FromFile for MeshDescriptions {
             .expect("Failed to get parent directory string");
 
         let file = File::open(&file).expect(format!("{} not found!", &file).as_str());
-        let mut reader = BufReader::new(&file);
+        let reader = BufReader::new(&file);
 
         for line in reader.lines() {
             let parts = match line {
