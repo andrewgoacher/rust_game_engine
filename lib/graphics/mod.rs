@@ -9,6 +9,9 @@ pub use self::vertex::*;
 
 pub use self::shapes::create_billboard;
 
+
+pub const FOV: f32 = 3.141592 / 3.0;
+
 use glium::Program;
 
 use std::{
