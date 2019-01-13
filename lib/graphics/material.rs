@@ -1,32 +1,60 @@
+//! Module contains a collection of types and functions representing a shader material
+//! primary usage of this comes from an obj file parser
 use parser::{FromFile, ParseError};
-use std::collections::HashMap;
 use std::fmt;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
+/// A type that represents a Material
 #[derive(Clone, Debug)]
 pub struct Material {
+    /// Name of the material
     pub name: String,
+    /// Specular intensity
     pub ns: f32,
+    /// Optical intensity
     pub ni: f32,
+    /// Dissolve factor (opacity)
     pub d: f32,
+    /// Transparency factor (should be inverse of D)
     pub tr: f32,
+    /// Transmission filter
     pub tf: MaterialColor,
+    /// Illumination model
     pub illum: IlluminationModel,
+    /// Ambient reflection
     pub ka: MaterialColor,
+    /// Diffuse reflection
     pub kd: MaterialColor,
+    /// Specular reflection
     pub ks: MaterialColor,
+    /// Emissive reflection
     pub ke: MaterialColor,
+    /// Ambient texture map
     pub map_ka: Option<String>,
+    /// Diffise texture map
     pub map_kd: Option<String>,
+    /// Reflection map
     pub map_refl: Option<String>,
+    /// Emissive map
     pub map_ke: Option<String>,
+    /// Bump map
     pub map_bump: Option<String>,
+    /// Opacity map
     pub map_d: Option<String>,
 }
 
+// todo: Need a default material
+// todo: Make this example run.
 impl Material {
+    /// Gets a copy of the name of the material without moving the borrow.
+    /// 
+    /// # Example
+    /// 
+    /// ```rust, no_run
+    /// let name = material.get_name();
+    /// ```
     pub fn get_name(&self) -> String {
         self.name.clone()
     }
@@ -399,31 +427,31 @@ impl fmt::Display for Material {
     }
 }
 
-/*
-0. Color on and Ambient off
-1. Color on and Ambient on
-2. Highlight on
-3. Reflection on and Ray trace on
-4. Transparency: Glass on, Reflection: Ray trace on
-5. Reflection: Fresnel on and Ray trace on
-6. Transparency: Refraction on, Reflection: Fresnel off and Ray trace on
-7. Transparency: Refraction on, Reflection: Fresnel on and Ray trace on
-8. Reflection on and Ray trace off
-9. Transparency: Glass on, Reflection: Ray trace off
-10. Casts shadows onto invisible surfaces
-*/
+// todo: Material and obj loading might need to be made into a more generic feature.
+/// An enum representing a materials illumination model
 #[derive(Clone, Debug)]
 pub enum IlluminationModel {
+    /// 0 - Color on and Ambient off
     ColorOnAmbientOff,
+    /// 1 - Color on and Ambient on
     ColorOnAmbientOn,
+    /// 2 - Highlight on
     HighlightOn,
+    /// 3 - Reflection on and raytrace on
     ReflectionAndRaytraceOn,
+    /// 4 - Transparency: Glass on, Reflection: Raytrace on
     TransparencyGlassOnReflectionRaytraceOn,
+    /// 5 - Reflection: Fresnel on and Raytrace on
     ReflectionFresnelOnRaytraceOn,
+    /// 6 - Transparency: Refraction on, Reflection: Fresnel off and Raytrace on
     TransparencyRefractionOnReflectionFresnelOffRaytraceOn,
+    /// 7 - Transparency: Refraction on, Reflection: Fresnel on and Raytrace on
     TransparencyRefractionOnReflectionFresnelOnRaytraceOn,
+    /// 8 - Reflection on and Raytrace off
     ReflectionOnRaytraceOff,
+    /// 9 - Transparency: Flass on, Reflection: Raytrace off
     TransparencyGlassOnReflectionRaytraceOff,
+    /// 10 - Casts shadows onto invisible surfaces
     CastsShadowsOntoInvisibleSurfacess,
 }
 
@@ -464,10 +492,24 @@ impl fmt::Display for IlluminationModel {
 }
 
 #[derive(Clone, Debug)]
+/// An enum representing various color formats
 pub enum MaterialColor {
+    /// No color
     None,
+    /// RGB standard format
+    /// # Arguments
+    /// `r` - The red value
+    /// `g` - The green value
+    /// `b` - The blue value
     RGB(f32, f32, f32),
+    /// CIE format
+    /// [See Wiki](https://en.wikipedia.org/wiki/CIE_1931_color_space)
+  
     CIEXYZ(f32, f32, f32),
+    /// Spectral format
+    /// # Arguments
+    /// `file` - The file to load
+    /// `factor` - an optional factor
     Spectral(String, Option<f32>),
 }
 

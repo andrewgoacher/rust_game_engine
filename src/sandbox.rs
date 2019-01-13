@@ -10,8 +10,9 @@ use rust_game_engine::{
     game::Game,
     graphics::{
         create_billboard, create_shader, load_texture, TextureConvert, VertexPositionNormalTexture,
+        FOV
     },
-    math::{Mat4x4, Matrix, Vec3, FOV},
+    math::{Mat4x4, Matrix, Vec3},
 };
 
 struct DemoGame {

@@ -1,7 +1,6 @@
 //! Represents a collection of types and functions for the rendering pipeline
 mod material;
 mod mesh;
-mod shapes;
 mod vertex;
 
 //todo: Make into prelude
@@ -10,12 +9,13 @@ pub use self::material::*;
 pub use self::mesh::*;
 pub use self::vertex::*;
 
-pub use self::shapes::create_billboard;
-
 /// Represents the default field of view
 pub const FOV: f32 = 3.141592 / 3.0;
 
-use glium::Program;
+use glium::{
+    Program, Display,
+    vertex::VertexBuffer
+};
 
 use std::{
     ffi::OsStr,
@@ -136,4 +136,102 @@ impl<'a> TextureConvert for glium::texture::RawImage2d<'a, u8> {
     fn as_srgb_texture_2d(self, display: &glium::Display) -> glium::texture::SrgbTexture2d {
         glium::texture::SrgbTexture2d::new(display, self).unwrap()
     }
+}
+
+implement_vertex!(VertexPositionNormalTexture, position, normal, texture);
+
+/// Creates a 2d square to render a billboarded texture on
+/// 
+/// # Arguments
+/// `display` - The glium display
+/// 
+/// # Panics
+/// when the buffer is not created
+/// 
+/// # Examples
+/// 
+/// ```rust,no_run
+/// let billboard =  create_billboard(&display);
+/// ```
+pub fn create_billboard(display: &Display) -> VertexBuffer<VertexPositionNormalTexture> {
+    use ::math::{Vec3,Vec4};
+
+    VertexBuffer::new(
+        display,
+        &[
+            VertexPositionNormalTexture {
+                position: Vec4 {
+                    x: -1.0,
+                    y: 1.0,
+                    z: 0.0,
+                    w: 1.0,
+                },
+                normal: Vec3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -1.0,
+                },
+                texture: Vec3 {
+                    x: 0.0,
+                    y: 1.0,
+                    z: 1.0,
+                },
+            },
+            VertexPositionNormalTexture {
+                position: Vec4 {
+                    x: 1.0,
+                    y: 1.0,
+                    z: 0.0,
+                    w: 1.0,
+                },
+                normal: Vec3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -1.0,
+                },
+                texture: Vec3 {
+                    x: 1.0,
+                    y: 1.0,
+                    z: 1.0,
+                },
+            },
+            VertexPositionNormalTexture {
+                position: Vec4 {
+                    x: -1.0,
+                    y: -1.0,
+                    z: 0.0,
+                    w: 1.0,
+                },
+                normal: Vec3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -1.0,
+                },
+                texture: Vec3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 1.0,
+                },
+            },
+            VertexPositionNormalTexture {
+                position: Vec4 {
+                    x: 1.0,
+                    y: -1.0,
+                    z: 0.0,
+                    w: 1.0,
+                },
+                normal: Vec3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -1.0,
+                },
+                texture: Vec3 {
+                    x: 1.0,
+                    y: 0.0,
+                    z: 1.0,
+                },
+            },
+        ],
+    )
+    .expect("Failed to create billboard")
 }
