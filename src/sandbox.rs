@@ -6,10 +6,12 @@ use glium::{
 };
 
 use rust_game_engine::{
-    game::{Game},
-    math::{Mat4x4, Matrix, FOV, Vec3},
-    graphics::{create_shader,load_texture, TextureConvert, create_billboard, VertexPositionNormalTexture},
-    engine::{create_engine,run}
+    engine::{create_engine, run},
+    game::Game,
+    graphics::{
+        create_billboard, create_shader, load_texture, TextureConvert, VertexPositionNormalTexture,
+    },
+    math::{Mat4x4, Matrix, Vec3, FOV},
 };
 
 struct DemoGame {
@@ -49,7 +51,8 @@ impl Game for DemoGame {
                 perspective: perspective.to_array(),
                 u_light: light, diffuse_tex: &self.diffuse_texture, normal_tex: &self.normal_map },
                 &params,
-            ).unwrap();
+            )
+            .unwrap();
 
         DemoGame { ..self }
     }
@@ -67,9 +70,21 @@ fn create_demo_game(display: &glium::Display) -> DemoGame {
         ),
         model: Mat4x4::identity(),
         view: Mat4x4::view(
-            &Vec3 { x: 0.5, y: 0.2, z: -3.0f32},
-            &Vec3{x: -0.5, y: -0.2, z: 3.0f32},
-            &Vec3{x: 0.0, y: 1.0, z: 0.0f32}
+            &Vec3 {
+                x: 0.5,
+                y: 0.2,
+                z: -3.0f32,
+            },
+            &Vec3 {
+                x: -0.5,
+                y: -0.2,
+                z: 3.0f32,
+            },
+            &Vec3 {
+                x: 0.0,
+                y: 1.0,
+                z: 0.0f32,
+            },
         ),
     }
 }
@@ -78,6 +93,6 @@ pub fn run_sandbox(title: &str) {
     let mut events_loop = glium::glutin::EventsLoop::new();
     let display = create_engine(&events_loop, title);
     let game = create_demo_game(&display);
-    
+
     run(&display, &mut events_loop, game);
 }

@@ -1,4 +1,4 @@
-use math::vector::{Vec3};
+use math::vector::Vec3;
 
 pub type Mat4x4 = [f32; 16];
 
@@ -6,7 +6,7 @@ pub trait Matrix {
     fn identity() -> Self;
     fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Self;
     fn view(position: &Vec3, direction: &Vec3, up: &Vec3) -> Self;
-    fn to_array(&self) -> [[f32;4]; 4];
+    fn to_array(&self) -> [[f32; 4]; 4];
 }
 
 impl Matrix for Mat4x4 {
@@ -82,12 +82,12 @@ impl Matrix for Mat4x4 {
         ]
     }
 
-    fn to_array(&self) -> [[f32;4];4] {
+    fn to_array(&self) -> [[f32; 4]; 4] {
         [
-            [self[0],self[1],self[2],self[3]],
-            [self[4],self[5],self[6],self[7]],
-            [self[8],self[9],self[10],self[11]],
-            [self[12],self[13],self[14],self[15]]
+            [self[0], self[1], self[2], self[3]],
+            [self[4], self[5], self[6], self[7]],
+            [self[8], self[9], self[10], self[11]],
+            [self[12], self[13], self[14], self[15]],
         ]
     }
 }

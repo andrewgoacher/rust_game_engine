@@ -1,4 +1,4 @@
-use parser::{ParseError, FromFile};
+use parser::{FromFile, ParseError};
 use std::collections::HashMap;
 use std::fmt;
 use std::fs::File;

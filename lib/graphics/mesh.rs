@@ -1,12 +1,12 @@
 use graphics::Material;
-use parser::{ParseError, FromFile};
+use graphics::{Vertex, VertexPositionNormal, VertexPositionNormalTexture, VertexPositionTexture};
+use math::{Vec3, Vec4, Vector};
+use parser::{FromFile, ParseError};
 use std::collections::HashMap;
 use std::fmt;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
-use math::{Vec3, Vec4, Vector};
-use graphics::{Vertex, VertexPositionNormal, VertexPositionNormalTexture, VertexPositionTexture};
 
 #[derive(Clone)]
 pub struct MeshDescription {

@@ -1,8 +1,5 @@
 use std::fs::File;
-use std::io::{
-    prelude::*,
-    Cursor
-};
+use std::io::{prelude::*, Cursor};
 
 pub fn to_cursor(mut file: File) -> Cursor<Vec<u8>> {
     let mut contents = vec![];

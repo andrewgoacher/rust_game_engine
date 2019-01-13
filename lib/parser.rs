@@ -1,6 +1,6 @@
 pub enum ParseError {
     UnknownToken(String),
-    GeneralError(String)
+    GeneralError(String),
 }
 
 pub trait FromFile {

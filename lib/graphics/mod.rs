@@ -3,22 +3,21 @@ mod mesh;
 mod shapes;
 mod vertex;
 
-pub use self::vertex::*;
-pub use self::mesh::*;
 pub use self::material::*;
+pub use self::mesh::*;
+pub use self::vertex::*;
 
-pub use self::shapes::{create_billboard};
+pub use self::shapes::create_billboard;
 
 use glium::Program;
 
 use std::{
     ffi::OsStr,
-    fs::{File, read_to_string},
-    path::Path
+    fs::{read_to_string, File},
+    path::Path,
 };
 
 use io::to_cursor;
-
 
 pub fn create_shader(vertex: &str, fragment: &str, display: &glium::Display) -> Program {
     let vertex_shader_src =
@@ -31,9 +30,9 @@ pub fn create_shader(vertex: &str, fragment: &str, display: &glium::Display) -> 
         &vertex_shader_src[..],
         &fragment_shader_src[..],
         None,
-    ).expect("Failed to compile shader")
+    )
+    .expect("Failed to compile shader")
 }
-
 
 fn get_image_format(path: &str) -> Option<image::ImageFormat> {
     let extension = Path::new(&path)
@@ -44,7 +43,7 @@ fn get_image_format(path: &str) -> Option<image::ImageFormat> {
     match extension {
         "png" => Some(image::PNG),
         "jpeg" | "jpg" => Some(image::JPEG),
-        _ => None
+        _ => None,
     }
 }
 
