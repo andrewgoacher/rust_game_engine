@@ -1,3 +1,4 @@
+//! A module that contains generic engine code
 use glium::{
     glutin::{ContextBuilder, EventsLoop, WindowBuilder},
     Display,
@@ -5,6 +6,15 @@ use glium::{
 
 use game::Game;
 
+/// Create a glium display and attaches an EventLoop to it
+/// # Arguments
+/// 
+/// `events_loop` - The events loop
+/// `title` - the window title
+/// 
+/// # Remarks
+/// 
+/// This does not create a borderless or fullscreen window.
 pub fn create_engine(events_loop: &EventsLoop, title: &str) -> Display {
     let window = WindowBuilder::new().with_title(title);
     let context = ContextBuilder::new().with_depth_buffer(24);
@@ -12,6 +22,8 @@ pub fn create_engine(events_loop: &EventsLoop, title: &str) -> Display {
     Display::new(window, context, &events_loop).expect("Failed to create glium display!")
 }
 
+/// Runs the main game loop
+/// This will run until the events loop recieves a close request.
 pub fn run<T: Game>(display: &Display, events_loop: &mut EventsLoop, game: T) {
     let mut running = true;
     let mut game = game;

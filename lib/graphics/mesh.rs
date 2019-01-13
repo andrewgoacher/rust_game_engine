@@ -1,6 +1,7 @@
+//! A module collecting functions and types for representing the description of a renderable mesh
 use graphics::Material;
 use graphics::{Vertex, VertexPositionNormal, VertexPositionNormalTexture, VertexPositionTexture};
-use math::{Vec3, Vec4, Vector};
+use math::{Vec3, Vec4, ParseVector};
 use parser::{FromFile, ParseError};
 use std::collections::HashMap;
 use std::fmt;
@@ -8,24 +9,33 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
-#[derive(Clone)]
+/// A struct that represents a single mesh description
+#[derive(Clone,Debug)]
 pub struct MeshDescription {
+    /// The collection of vertices
     pub vertices: Vec<Vertex>,
+    /// The name of the mesh
     pub name: String,
+    /// The name of the associated material
     pub material: String,
 }
 
+// todo: Handle this method better
+// todo: Don't just swallow the oks
 impl fmt::Display for MeshDescription {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "Mesh ({})", self.name);
-        writeln!(f, "\tMaterial: {}", self.material);
+        writeln!(f, "Mesh ({})", self.name).ok();
+        writeln!(f, "\tMaterial: {}", self.material).ok();
         writeln!(f, "\tVertices: {}", self.vertices.len())
     }
 }
 
-#[derive(Clone)]
+/// A struct that represents a collection of materials and a collection of meshes
+#[derive(Clone, Debug)]
 pub struct MeshDescriptions {
+    /// A collection of materials keyed by name
     pub materials: HashMap<String, Material>,
+    /// A collection of meshes
     pub meshes: Vec<MeshDescription>,
 }
 
@@ -41,6 +51,12 @@ impl fmt::Display for MeshDescriptions {
 }
 
 impl MeshDescription {
+    /// Creates a new mesh description
+    /// 
+    /// # Arguments
+    /// `name` - the name of the mesh
+    /// `material` - the name of the material
+    /// `vertices` - the collection of vertices in the mesh
     fn new(name: String, material: String, vertices: Vec<Vertex>) -> MeshDescription {
         MeshDescription {
             name: name,
@@ -51,6 +67,11 @@ impl MeshDescription {
 }
 
 impl MeshDescriptions {
+    /// Creates a new collection of meshes
+    /// 
+    /// # Arguments
+    /// `meshes` - a collection of meshes
+    /// `materials` - a collection of materials
     fn new(meshes: Vec<MeshDescription>, materials: HashMap<String, Material>) -> MeshDescriptions {
         MeshDescriptions {
             materials: materials,

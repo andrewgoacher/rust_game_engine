@@ -1,29 +1,44 @@
+//! A module for standard Vertex types for use in rendering 3d images
 use math::{Vec3, Vec4};
 use std::fmt;
 
-#[derive(Clone, Copy)]
+/// A vertex that contains a position, a normal and a texture coordinate
+#[derive(Clone, Copy,Debug)]
 pub struct VertexPositionNormalTexture {
+    /// The position of the Vertex
     pub position: Vec4,
+    /// The vertex normal
     pub normal: Vec3,
+    /// The texture coordinates of the vertex
     pub texture: Vec3,
 }
 
-#[derive(Clone, Copy)]
+/// A vertex that contains a position and a texture coordinate
+#[derive(Clone, Copy,Debug)]
 pub struct VertexPositionTexture {
+    /// The position of the vertex
     pub position: Vec4,
+    /// The texture coordinates of the vertex
     pub texture: Vec3,
 }
 
-#[derive(Clone, Copy)]
+/// A vertex that contains a position and a normal
+#[derive(Clone, Copy,Debug)]
 pub struct VertexPositionNormal {
+    /// The position of the vertex
     pub position: Vec4,
+    /// The vertex normal
     pub normal: Vec3,
 }
 
-#[derive(Clone, Copy)]
+/// An enum that represents one of a variety of vertex types
+#[derive(Clone, Copy,Debug)]
 pub enum Vertex {
+    /// A vertex that contains a position, normal and texture coordinate
     PositionNormalTexture(VertexPositionNormalTexture),
+    /// A vertex that has a position and a texture coordinate
     PositionTexture(VertexPositionTexture),
+    /// A vertex that has a position and a normal
     PositionNormal(VertexPositionNormal),
 }
 
