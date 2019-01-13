@@ -1,3 +1,6 @@
+//! This module represents functionality for parsing files
+//! within this engine there are many types that can be loaded from
+//! the file system and the common behaviours and types can be represented here.
 #[derive(Debug)]
 /// A helper enum to represent parsing errors
 pub enum ParseError {
