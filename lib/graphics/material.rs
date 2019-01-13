@@ -5,9 +5,10 @@ use std::fmt;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
+use std::default::Default;
 
 /// A type that represents a Material
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug,Default)]
 pub struct Material {
     /// Name of the material
     pub name: String,
@@ -45,16 +46,8 @@ pub struct Material {
     pub map_d: Option<String>,
 }
 
-// todo: Need a default material
-// todo: Make this example run.
 impl Material {
     /// Gets a copy of the name of the material without moving the borrow.
-    /// 
-    /// # Example
-    /// 
-    /// ```rust, no_run
-    /// let name = material.get_name();
-    /// ```
     pub fn get_name(&self) -> String {
         self.name.clone()
     }
@@ -455,6 +448,12 @@ pub enum IlluminationModel {
     CastsShadowsOntoInvisibleSurfacess,
 }
 
+impl Default for IlluminationModel {
+    fn default() -> IlluminationModel {
+        IlluminationModel::ColorOnAmbientOff
+    }
+}
+
 impl fmt::Display for IlluminationModel {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -511,6 +510,12 @@ pub enum MaterialColor {
     /// `file` - The file to load
     /// `factor` - an optional factor
     Spectral(String, Option<f32>),
+}
+
+impl Default for MaterialColor {
+    fn default() -> MaterialColor {
+        MaterialColor::None
+    }
 }
 
 impl fmt::Display for MaterialColor {

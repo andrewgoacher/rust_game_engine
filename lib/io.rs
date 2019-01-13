@@ -7,14 +7,6 @@ use std::io::{prelude::*, Cursor};
 /// # Arguments
 /// 
 /// `file` - a file to load
-/// 
-/// # Example
-/// 
-/// ```rust,no_run 
-/// let mut file = File::open("path/to.file").unwrap();
-/// 
-/// let cursor = to_cursor(mut file);
-/// ```
 pub fn to_cursor(mut file: File) -> Cursor<Vec<u8>> {
     let mut contents = vec![];
     file.read_to_end(&mut contents).ok();

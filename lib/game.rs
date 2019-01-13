@@ -5,22 +5,6 @@ use glium::Frame;
 
 /// A collection of methods that a game should implement 
 /// to be run from within an engine.
-/// 
-/// # Example
-/// 
-/// ```rust
-/// struct GameExample {
-///     total_frames: u32
-/// }
-/// 
-/// impl Game for GameExample {
-///     fn on_frame(self, frame: &mut glium::Frame) -> GameExample {
-///         GameExample {
-///             total_frames: self.total_frames + 1
-///         }
-///     }
-/// }
-/// ```
 pub trait Game {
     /// Method to be run once per frame
     /// 

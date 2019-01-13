@@ -6,35 +6,6 @@
 //! 
 //! This crate contains several modules [`graphics`] contains the majority of the render code, [`math`] contains a set of utilities for Vector and Matrix maths
 //! creating the actual display / engine requires use of [`engine`] and creating a game requires implemting the trait `Game` from within the [`game`] module.
-//! 
-//! A minimal implementation would be
-//! ```
-//! rust_game_engine::game::Game;
-//! 
-//! struct Demo {}
-//! impl Game for Demo {
-//!     fn on_frame(self, frame: &mut glium::Frame) -> Demo {
-//!         Demo {}
-//!     }
-//! }
-//! ```
-//! 
-//! To run the demo you need to create an events loop and an engine
-//! 
-//! ```
-//! let mut events_loop = glium::glutin::EventsLoop::new();
-//! let display = create_engine(&events_loop, "Window Title");
-//! let game = Demo {};
-//! 
-//! ```
-//! 
-//! The [`engine`] module exposes a method `run` to run the game
-//! 
-//! ``` 
-//! use rust_game_engine::engine::run;
-//! 
-//! run(&display, &mut events_loop, game);
-//! ```
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 

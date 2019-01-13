@@ -15,12 +15,6 @@ use game::Game;
 /// # Remarks
 /// 
 /// This does not create a borderless or fullscreen window.
-/// 
-/// # Example
-/// 
-/// ```rust,no_run
-/// let display = create_engine(&events_loop, "Window Title");
-/// ```
 pub fn create_engine(events_loop: &EventsLoop, title: &str) -> Display {
     let window = WindowBuilder::new().with_title(title);
     let context = ContextBuilder::new().with_depth_buffer(24);
@@ -30,12 +24,6 @@ pub fn create_engine(events_loop: &EventsLoop, title: &str) -> Display {
 
 /// Runs the main game loop
 /// This will run until the events loop recieves a close request.
-/// 
-/// # Example
-/// 
-/// ```rust,no_run
-/// run(&display, &mut events_loop, game);
-/// ```
 pub fn run<T: Game>(display: &Display, events_loop: &mut EventsLoop, game: T) {
     let mut running = true;
     let mut game = game;

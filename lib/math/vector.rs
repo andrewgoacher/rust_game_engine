@@ -6,15 +6,9 @@
 use glium::vertex::{Attribute, AttributeType};
 use std::ops::Index;
 
+// todo: Missing examples
+
 /// A struct representing a 2 point vector
-///
-/// # Example
-///
-/// ```rust
-/// let v2 = Vec2 {x: 1.0f32, y: 2.0f32};
-/// # assert_eq!(1.0f32, v2.x);
-/// # assert_eq!(2.0f32, v2.y);
-/// ```
 #[derive(Copy, Clone, Debug)]
 pub struct Vec2 {
     /// Represents the first point in the vec2
@@ -24,15 +18,6 @@ pub struct Vec2 {
 }
 
 /// A struct representing a 3 point vector
-///
-/// # Example
-///
-/// ```rust
-/// let v3 = Vec3 {x: 1.0f32, y: 2.0f32, z: 3.0f32};
-/// # assert_eq!(1.0f32, v3.x);
-/// # assert_eq!(2.0f32, v3.y);
-/// # assert_eq!(3.0f32, v3.z);
-/// ```
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3 {
     /// Represents the first point in the vec3
@@ -44,16 +29,6 @@ pub struct Vec3 {
 }
 
 /// A strict representing a 4 point vector
-///
-/// # Example
-///
-/// ```rust
-/// let v4 = Vec4 { x: 1.0f32, y: 2.0f32, z: 3.0f32, w: 4.0f32}
-/// # assert_eq!(1.0f32, v4.x);
-/// # assert_eq!(2.0f32, v4.y);
-/// # assert_eq!(3.0f32, v4.z);
-/// # assert_eq!(4.0f32, v4.w);
-/// ```
 #[derive(Copy, Clone, Debug)]
 pub struct Vec4 {
     /// Represents the first point in the vec4
@@ -69,27 +44,12 @@ pub struct Vec4 {
 /// A collection of functions for Vectors
 pub trait Vector {
     /// returns an empty vector
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// let v = Vec2::zero();
-    /// #assert_eq!(0.0f32, v.x);
-    /// #assert_eq!(0.0f32, v.y);
-    /// ```
     fn zero() -> Self;
 
     /// returns a vector with each point set to the provided value
     ///
     /// # Arguments
     /// `val` - the value for each point
-    ///
-    /// # Example
-    /// ```rust
-    /// let v = Vec2::from_val(5.0f32);
-    /// #assert_eq!(5.0f32, v.x);
-    /// #assert_eq!(5.0f32, v.y);
-    /// ```
     fn from_val(val: f32) -> Self;
 }
 
@@ -106,16 +66,6 @@ pub trait ParseVector {
     /// # Arguments
     ///
     /// `val` - the string to parse
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// let s = "1.0 2.0 3.0";
-    /// let v = Vec3::from_str(s);
-    /// # assert_eq!(1.0f32, v.x);
-    /// # assert_eq!(2.0f32, v.y);
-    /// # assert_eq!(3.0f32, v.z);
-    /// ```
     fn from_str(val: &str) -> Result<Self::Result, Self::Err>;
 }
 

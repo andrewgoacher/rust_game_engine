@@ -27,6 +27,7 @@ use io::to_cursor;
 
 // todo: vertex and fragment shader source should be passed in - not file handles 
 // todo: Shouldn't return Program, Should return option
+// todo: Example missing
 /// Creates a shader from a vertex and fragment shader program
 /// 
 /// # Arguments
@@ -40,11 +41,6 @@ use io::to_cursor;
 /// * When there is no file found for the vertex shader
 /// * When there is no file found for the fragment shader
 /// * When the program doesn't compile
-/// 
-/// # Example
-/// ```rust,no_run
-/// let shader = create_shader(&vertex_shader_src, &fragment_shader_src, &display);
-/// ```
 pub fn create_shader(vertex: &str, fragment: &str, display: &glium::Display) -> Program {
     let vertex_shader_src =
         read_to_string(&vertex).expect(format!("Failed to find {}", &vertex).as_str());
@@ -75,6 +71,7 @@ fn get_image_format(path: &str) -> Option<image::ImageFormat> {
 
 // todo: Shouldn't load from file, should pass in file
 // todo: Make sure unexpected formats are handled better
+// todo: Missing examples
 /// Loads an OpenGL texture from a file as raw image data
 /// # Arguments
 /// `path` - the path to the texture file
@@ -82,11 +79,6 @@ fn get_image_format(path: &str) -> Option<image::ImageFormat> {
 /// # Panics
 /// * When the file could not be found
 /// * When the file is in an unsupported format
-/// 
-/// # Example
-/// ```rust,no_run
-/// let texture = load_texture("path/to.file");
-/// ```
 pub fn load_texture<'a>(path: &str) -> glium::texture::RawImage2d<'a, u8> {
     let file = File::open(&path).expect(format!("Could not find file {}", &path).as_str());
 
@@ -100,6 +92,7 @@ pub fn load_texture<'a>(path: &str) -> glium::texture::RawImage2d<'a, u8> {
     glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions)
 }
 
+// todo: Missing examples
 /// A trait that handles converting from a source type into an OpenGL Texture type
 pub trait TextureConvert {
     /// Converts to an OpenGL Texture2d
@@ -107,24 +100,12 @@ pub trait TextureConvert {
     /// # Arguments
     /// `self`
     /// `display` - The glium display
-    /// 
-    /// # Example
-    /// ```rust,no_run
-    /// let texture = load_texture("path/to/texture.file");
-    /// let tex_2d = texture.as_texture_2d(&display);
-    /// ```
     fn as_texture_2d(self, display: &glium::Display) -> glium::texture::Texture2d;
     /// Converts to an OpenGL Texture2d in SRGB format
     /// 
     /// # Arguments
     /// `self`
     /// `display` - The glium display
-    /// 
-    /// # Example
-    /// ```rust,no_run
-    /// let texture = load_texture("path/to_texture.file");
-    /// let tex_2d = texture.as_srgb_texture_2d(&display);
-    /// ```
     fn as_srgb_texture_2d(self, display: &glium::Display) -> glium::texture::SrgbTexture2d;
 }
 
@@ -147,12 +128,6 @@ implement_vertex!(VertexPositionNormalTexture, position, normal, texture);
 /// 
 /// # Panics
 /// when the buffer is not created
-/// 
-/// # Examples
-/// 
-/// ```rust,no_run
-/// let billboard =  create_billboard(&display);
-/// ```
 pub fn create_billboard(display: &Display) -> VertexBuffer<VertexPositionNormalTexture> {
     use ::math::{Vec3,Vec4};
 

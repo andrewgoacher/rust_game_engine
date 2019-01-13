@@ -57,14 +57,6 @@ impl MeshDescription {
     /// `name` - the name of the mesh
     /// `material` - the name of the material
     /// `vertices` - the collection of vertices in the mesh
-    /// 
-    /// # Example
-    /// ```rust
-    /// let mesh_desc = MeshDescription::new("Name", "Material", Vec::new());
-    /// 
-    /// #assert_eq!("Name", mesh_desc.name);
-    /// #assert_eq!("Material", mesh_desc.material);
-    /// ```
     fn new(name: String, material: String, vertices: Vec<Vertex>) -> MeshDescription {
         MeshDescription {
             name: name,

@@ -29,27 +29,5 @@ pub trait FromFile {
     /// 
     /// It's recommended that when implementing this trait, the ParseResult is 
     /// `Result<T, ParseError>`
-    /// 
-    /// # Example
-    /// 
-    /// ```rust,no_run
-    /// struct ParsedResult {}
-    /// 
-    /// impl FromFile for ParsedResult {
-    ///     type ParseResult = Result<ParsedResult, ParseError>;
-    /// 
-    ///     fn from_file(file: &str) -> Self::ParsedResult {
-    ///         Ok(ParsedResult)
-    ///     }
-    /// }
-    /// 
-    /// match ParsedResult::from_file("Some/path/to.file") {
-    ///     Err(e) => match e {
-    ///         ParseError::UnknownToken(token) => panic!("Token"),
-    ///         ParseError::GeneralError(error) => panic!("Generic Error")
-    ///     },
-    ///     Ok(result) => result
-    /// }
-    /// ```
     fn from_file(file: &str) -> Self::ParseResult;
 }

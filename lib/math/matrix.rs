@@ -1,72 +1,35 @@
 //! A collection of types and functions for representing Matrices
 use math::vector::Vec3;
 
+// todo: Missing examples
+
 /// Represents a 4x4 matrix as an array of 16 floats.
 pub type Mat4x4 = [f32; 16];
 
 /// A trait that represents the functionality for a matrix
 pub trait Matrix {
     /// Creates an identity matrix
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// let m = Mat4x4::identity();
-    ///
-    /// # assert_eq!(1.0f32, m[0]);
-    /// # assert_eq!(1.0f32, m[5]);
-    /// # assert_eq!(1.0f32, m[11]);
-    /// # assert_eq!(1.0f32, m[15]);
-    /// ```
     fn identity() -> Self;
     /// Creates a perspective matrix
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `dimensions` - a tuple containing the width and height of the provided dimensions
     /// `fov` - the field of view for the view
     /// `z` - a tuple containing the near and far z planes
-    /// 
+    ///
     /// # Returns
     /// a Matrix
-    /// 
-    /// # Example
-    /// 
-    /// ```rust
-    /// let dimensions = (100,200);
-    /// let fov = 45;
-    /// let z = (1.0f32, 200f32);
-    /// 
-    /// let matrix = perspective(dimensions, fov, z);
-    /// ```
     fn perspective(dimensions: (u32, u32), fov: f32, z: (f32, f32)) -> Self;
     /// Creates a view matrix
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// `position` - The position of the "camera"
     /// `direction` - The direction the camera is facing
     /// `up` - The orientation of the camnera
-    /// 
-    /// # Example
-    /// 
-    /// ```rust
-    /// let p = Vec3 { x: 1.0f32, y: 2.0f32, z: 3.0f32};
-    /// let d = Vec3 { x: 1.0f32, y: 2.0f32, z: 3.0f32};
-    /// let u = Vec3 { x: 1.0f32, y: 2.0f32, z: 3.0f32};
-    /// 
-    /// let view = view(&p, &d, &u);
-    /// ```
     fn view(position: &Vec3, direction: &Vec3, up: &Vec3) -> Self;
     /// Converts the matrix into 4 slices of 4 point arrays
-    /// 
-    /// # Example
-    /// ```rust
-    /// let matrix = Mat4x4::identity();
-    /// let arr = matrix.to_array();
-    /// 
-    /// #assert_eq([1.0f32, 0.0f32, 0.0f32, 0.0f32], arr[0]);
-    /// ```
     fn to_array(&self) -> [[f32; 4]; 4];
 }
 
